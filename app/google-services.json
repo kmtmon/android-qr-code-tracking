@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "276470924940",
+    "firebase_url": "https://qr-code-tracking-system.firebaseio.com",
+    "project_id": "qr-code-tracking-system",
+    "storage_bucket": "qr-code-tracking-system.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:276470924940:android:bd407cfee2560f61",
+        "android_client_info": {
+          "package_name": "com.example.mon.qrcodetrackingsystem"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "276470924940-jpea259b1hphn7piluagvgea4ub69jjh.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "276470924940-jpea259b1hphn7piluagvgea4ub69jjh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAvBsh0llOOY6eD9TJ0jhF8iXQa3gLcwt0"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
