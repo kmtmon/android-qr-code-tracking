@@ -1,10 +1,12 @@
 package com.example.mon.qrcodetrackingsystem;
 
 import android.app.Activity;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.example.mon.qrcodetrackingsystem.databinding.ActivityLandingBinding;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
@@ -18,11 +20,13 @@ import java.util.Map;
 public class LandingActivity extends Activity {
 
     private String TAG = LandingActivity.class.getSimpleName();
+    ActivityLandingBinding activityLandingBinding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_landing);
+
+        activityLandingBinding = DataBindingUtil.setContentView(LandingActivity.this, R.layout.activity_landing);
 
         // Access a Cloud Firestore instance from your Activity
 
