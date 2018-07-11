@@ -1,25 +1,15 @@
 package com.example.mon.qrcodetrackingsystem;
 
-import android.app.Activity;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.util.Log;
 
+import com.example.mon.qrcodetrackingsystem.base.BaseActivity;
 import com.example.mon.qrcodetrackingsystem.databinding.ActivityLandingBinding;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.util.HashMap;
-import java.util.Map;
-
-public class LandingActivity extends Activity {
+public class LandingActivity extends BaseActivity {
 
     private String TAG = LandingActivity.class.getSimpleName();
+
     ActivityLandingBinding activityLandingBinding;
 
     @Override
@@ -28,6 +18,7 @@ public class LandingActivity extends Activity {
 
         activityLandingBinding = DataBindingUtil.setContentView(LandingActivity.this, R.layout.activity_landing);
 
+        /*
         // Access a Cloud Firestore instance from your Activity
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -53,6 +44,7 @@ public class LandingActivity extends Activity {
                         Log.w(TAG, "Error adding document", e);
                     }
                 });
+                */
 
     }
 }
