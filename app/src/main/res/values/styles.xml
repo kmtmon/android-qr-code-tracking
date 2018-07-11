@@ -10,4 +10,26 @@
         <item name="android:windowNoTitle">true</item>
     </style>
 
+
+    <!-- ActionBar Style -->
+    <style name="ActionBarMenu" parent="Theme.AppCompat.Light" >
+        <item name="android:background">@color/colorPrimary</item>
+    </style>
+
+    <!-- Text Style -->
+    <style name="TextAppearance">
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
+        <item name="android:textColorHint">?android:attr/textColorHint</item>
+        <item name="android:textColorHighlight">?android:attr/textColorHighlight</item>
+    </style>
+
+    <style name="TextAppearance.Header">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@color/pure_white</item>
+    </style>
+
+    <style name="TextAppearance.NormalAction">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/pure_white</item>
+    </style>
 </resources>
