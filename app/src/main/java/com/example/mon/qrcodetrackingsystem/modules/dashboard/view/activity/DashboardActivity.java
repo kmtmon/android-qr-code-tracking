@@ -49,7 +49,7 @@ public class DashboardActivity extends BaseActivity {
         //region Click
         RxUtils.clicks(dashboardBinding.add)
                 .subscribe(view -> {
-                    EditItemActivity.show(this);
+                    ProductInfoActivity.show(this);
                 });
         //endregion
     }

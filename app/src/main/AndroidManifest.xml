@@ -19,7 +19,8 @@
         </activity>
         <activity android:name=".modules.dashboard.view.activity.DashboardActivity" />
         <activity android:name=".modules.dashboard.view.activity.EditItemActivity" />
-        <activity android:name=".modules.dashboard.view.activity.ItemLogActivity"></activity>
+        <activity android:name=".modules.dashboard.view.activity.ItemLogActivity" />
+        <activity android:name=".modules.dashboard.view.activity.ProductInfoActivity"></activity>
     </application>
 
 </manifest>
