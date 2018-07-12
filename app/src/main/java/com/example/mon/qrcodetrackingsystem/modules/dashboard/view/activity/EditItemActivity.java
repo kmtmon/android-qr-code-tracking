@@ -7,9 +7,11 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 
 import com.example.mon.qrcodetrackingsystem.R;
+import com.example.mon.qrcodetrackingsystem.base.BaseActivity;
 import com.example.mon.qrcodetrackingsystem.databinding.ActivityEditItemBinding;
+import com.example.mon.qrcodetrackingsystem.utils.RxUtils;
 
-public class EditItemActivity extends Activity {
+public class EditItemActivity extends BaseActivity {
 
     /** Entry */
     public static void show(Context context) {
@@ -23,5 +25,12 @@ public class EditItemActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mBinding = DataBindingUtil.setContentView(EditItemActivity.this, R.layout.activity_edit_item);
+
+        //region Click
+        RxUtils.clicks(mBinding.log)
+                .subscribe(view -> {
+                    ItemLogActivity.show(this);
+                });
+        //endregion
     }
 }

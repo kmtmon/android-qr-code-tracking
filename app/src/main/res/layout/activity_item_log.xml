@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <data>
-    </data>
+    <data/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -27,23 +26,15 @@
                 app:contentInsetEnd="0dp"
                 app:contentInsetStart="0dp">
 
-
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical">
-
-                    <TextView
-                        style="@style/TextAppearance.Regular"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Log Out"
-                        android:layout_marginStart="15dp"/>
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
 
                     <View
                         android:layout_width="44dp"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="wrap_content" />
 
                     <!-- Header Text layout -->
                     <RelativeLayout
@@ -62,16 +53,9 @@
                             android:ellipsize="end"
                             android:gravity="center"
                             android:maxLines="1"
-                            android:text="Dashboard" />
-
+                            android:text="Item Log" />
 
                     </RelativeLayout>
-
-                    <ImageView
-                        android:layout_width="25dp"
-                        android:layout_height="25dp"
-                        android:layout_marginEnd="15dp"
-                        android:src="@drawable/camera_icon"/>
 
                 </LinearLayout>
 
@@ -87,18 +71,6 @@
                 android:id="@+id/recyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"></android.support.v7.widget.RecyclerView>
-
-            <ImageView
-                android:id="@+id/add"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_gravity="end|bottom"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentEnd="true"
-                android:layout_marginEnd="30dp"
-                android:layout_marginBottom="30dp"
-                android:src="@drawable/floating_add_icon"
-                android:elevation="10dp" />
 
         </RelativeLayout>
 
