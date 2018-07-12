@@ -26,7 +26,7 @@ public class LoginActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         loginBinding = DataBindingUtil.setContentView(LoginActivity.this, R.layout.activity_login);
 
-        //region Set Up
+        //region Click
         RxUtils.clicks(loginBinding.login)
                 .subscribe(view -> {
                     navigateToDashboard();

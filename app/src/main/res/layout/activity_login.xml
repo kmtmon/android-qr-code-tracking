@@ -23,22 +23,18 @@
 
             <EditText
                 android:id="@+id/email"
+                style="@style/EditTextAppearance.White"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Email"
-                android:textColorHint="@color/pale_white"
-                android:textColor="@color/pure_white"
-                android:backgroundTint="@color/pale_white"/>
+                android:hint="Email" />
 
             <EditText
                 android:id="@+id/password"
+                style="@style/EditTextAppearance.White"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:hint="Password"
-                android:textColorHint="@color/pale_white"
-                android:textColor="@color/pure_white"
-                android:backgroundTint="@color/pale_white"/>
+                android:hint="Password" />
 
             <Button
                 android:id="@+id/login"
@@ -51,7 +47,7 @@
                 android:padding="10dp"
                 android:background="@color/yellow"
                 android:textColor="@color/pale_black"/>
-            
+
         </LinearLayout>
 
     </RelativeLayout>

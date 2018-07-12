@@ -9,7 +9,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".LandingActivity"></activity>
+        <activity android:name=".LandingActivity" />
         <activity android:name=".modules.login.view.activity.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -17,7 +17,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".modules.dashboard.view.activity.DashboardActivity"></activity>
+        <activity android:name=".modules.dashboard.view.activity.DashboardActivity" />
+        <activity android:name=".modules.dashboard.view.activity.EditItemActivity"></activity>
     </application>
 
 </manifest>

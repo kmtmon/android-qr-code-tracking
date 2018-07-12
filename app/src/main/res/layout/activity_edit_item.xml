@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/pale_white"
+        android:orientation="vertical">
+
+        <android.support.design.widget.AppBarLayout
+            android:id="@+id/appBarLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:theme="@style/ActionBarMenu">
+
+            <!-- toolbar -->
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?android:attr/actionBarSize"
+                android:animateLayoutChanges="true"
+                android:background="@color/pure_white"
+                android:theme="@style/ActionBarMenu"
+                app:contentInsetEnd="0dp"
+                app:contentInsetStart="0dp">
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <View
+                        android:layout_width="20dp"
+                        android:layout_height="wrap_content" />
+
+                    <!-- Header Text layout -->
+                    <RelativeLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center">
+
+                        <!-- Header Text -->
+                        <TextView
+                            android:id="@+id/headerName"
+                            style="@style/TextAppearance.Header"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginEnd="?attr/actionBarSize"
+                            android:ellipsize="end"
+                            android:gravity="center"
+                            android:maxLines="1"
+                            android:text="Item Info" />
+
+
+                    </RelativeLayout>
+
+                </LinearLayout>
+
+            </android.support.v7.widget.Toolbar>
+
+        </android.support.design.widget.AppBarLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <!--Form-->
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingLeft="20dp"
+                    android:paddingRight="20dp"
+                    android:paddingTop="20dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Product"
+                        style="@style/TextAppearance.Tiny"
+                        android:textColor="@color/pale_black"/>
+
+                    <!--Product-->
+                    <EditText
+                        android:id="@+id/product"
+                        style="@style/EditTextAppearance.Black"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text="Status"
+                        style="@style/TextAppearance.Tiny"
+                        android:textColor="@color/pale_black"/>
+
+                    <!--Status-->
+                    <EditText
+                        android:id="@+id/status"
+                        style="@style/EditTextAppearance.Black"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                    <!--In Ware House Info -->
+                    <LinearLayout
+                        android:visibility="gone"
+                        android:id="@+id/in_warehouse_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:text="Floor Level"
+                            style="@style/TextAppearance.Tiny"
+                            android:textColor="@color/pale_black"/>
+
+                        <!--Floor Level -->
+                        <EditText
+                            android:id="@+id/floorlevel"
+                            style="@style/EditTextAppearance.Black"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Rack Number"
+                            android:layout_marginTop="10dp"
+                            style="@style/TextAppearance.Tiny"
+                            android:textColor="@color/pale_black"/>
+
+                        <!--Rack Number -->
+                        <EditText
+                            android:id="@+id/racknumber"
+                            style="@style/EditTextAppearance.Black"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:text="Rack Level"
+                            style="@style/TextAppearance.Tiny"
+                            android:textColor="@color/pale_black"/>
+
+                        <!--Rack Level -->
+                        <EditText
+                            android:id="@+id/racklevel"
+                            style="@style/EditTextAppearance.Black"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:text="Rack Level"
+                            style="@style/TextAppearance.Tiny"
+                            android:textColor="@color/pale_black"/>
+
+                        <!--Rack Column -->
+                        <EditText
+                            android:id="@+id/rackcolumn"
+                            style="@style/EditTextAppearance.Black"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+
+                    </LinearLayout>
+
+                    <!--Updated Label-->
+                    <TextView
+                        android:id="@+id/updatedAt"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="30dp"
+                        style="@style/TextAppearance.Regular"
+                        android:text="Dummy is marked as Dummy at DD/MM/YYYY"
+                        android:textColor="@color/pale_black"
+                        android:textAlignment="center"/>
+                </LinearLayout>
+
+            </ScrollView>
+
+            <!--Button Group-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:orientation="vertical"
+                android:layout_marginBottom="10dp">
+
+                <Button
+                    android:visibility="gone"
+                    android:id="@+id/log"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Log"
+                    style="@style/ButtonAppearance"
+                    android:background="@drawable/shape_rectangle_solid_primary"/>
+
+                <Button
+                    android:visibility="gone"
+                    android:id="@+id/edit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Edit"
+                    style="@style/ButtonAppearance"
+                    android:background="@drawable/shape_rectangle_solid_primary"/>
+
+                <Button
+                    android:id="@+id/add"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Add"
+                    style="@style/ButtonAppearance"
+                    android:background="@drawable/shape_rectangle_solid_primary"/>
+
+                <Button
+                    android:visibility="gone"
+                    android:id="@+id/save"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Save"
+                    style="@style/ButtonAppearance"
+                    android:background="@drawable/shape_rectangle_solid_primary"/>
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+</layout>

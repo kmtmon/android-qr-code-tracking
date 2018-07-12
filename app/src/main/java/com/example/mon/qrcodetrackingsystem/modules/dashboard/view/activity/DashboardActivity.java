@@ -13,6 +13,7 @@ import com.example.mon.qrcodetrackingsystem.R;
 import com.example.mon.qrcodetrackingsystem.base.BaseActivity;
 import com.example.mon.qrcodetrackingsystem.databinding.ActivityDashboardBinding;
 import com.example.mon.qrcodetrackingsystem.modules.dashboard.view.adapter.DashboardProductAdapter;
+import com.example.mon.qrcodetrackingsystem.utils.RxUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,7 +42,16 @@ public class DashboardActivity extends BaseActivity {
         mRecyclerView = dashboardBinding.recyclerView;
         productList = Arrays.asList("sup1", "sup2", "sup3");
 
+        //region Setup
         setUpProductAdapter();
+        //endregion
+
+        //region Click
+        RxUtils.clicks(dashboardBinding.add)
+                .subscribe(view -> {
+                    EditItemActivity.show(this);
+                });
+        //endregion
     }
 
     private void setUpProductAdapter() {

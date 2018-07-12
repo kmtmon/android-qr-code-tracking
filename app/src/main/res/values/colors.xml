@@ -5,6 +5,9 @@
     <color name="colorAccent">#FF4081</color>
     <color name="pure_white">#FFFFFF</color>
     <color name="pale_white">#EEEEEE</color>
+    <color name="light_gray">#BDC3C7</color>
+    <color name="dark_gray">#6C7A89</color>
     <color name="yellow">#E9D460</color>
     <color name="pale_black">#2C3E50</color>
+    <color name="pure_black">#000000</color>
 </resources>
