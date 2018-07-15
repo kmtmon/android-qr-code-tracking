@@ -34,7 +34,6 @@ public class LoginActivity extends BaseActivity {
     /** Entry */
     public static void show(Context context) {
         Intent intent = new Intent(context, LoginActivity.class);
-        intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY);
         context.startActivity(intent);
     }
 

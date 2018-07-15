@@ -92,7 +92,11 @@
                     style="@style/EditTextAppearance.Black"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="none"/>
+                    android:inputType="none"
+                    android:clickable="false"
+                    android:cursorVisible="false"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"/>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -108,7 +112,12 @@
                     style="@style/EditTextAppearance.Black"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="none"/>
+                    android:inputType="none"
+                    android:clickable="false"
+                    android:cursorVisible="false"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    />
 
                 <TextView
                     android:layout_width="wrap_content"

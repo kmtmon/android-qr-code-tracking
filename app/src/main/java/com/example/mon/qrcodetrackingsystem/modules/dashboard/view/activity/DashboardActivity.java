@@ -10,10 +10,15 @@ import android.support.v7.widget.RecyclerView;
 import com.example.mon.qrcodetrackingsystem.R;
 import com.example.mon.qrcodetrackingsystem.base.BaseActivity;
 import com.example.mon.qrcodetrackingsystem.databinding.ActivityDashboardBinding;
+import com.example.mon.qrcodetrackingsystem.modules.dashboard.objectmodel.Product;
 import com.example.mon.qrcodetrackingsystem.modules.dashboard.view.adapter.DashboardProductAdapter;
 import com.example.mon.qrcodetrackingsystem.modules.login.view.activity.LoginActivity;
 import com.example.mon.qrcodetrackingsystem.utils.RxUtils;
 import com.example.mon.qrcodetrackingsystem.utils.SharedPreferenceManager;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,7 +29,6 @@ public class DashboardActivity extends BaseActivity {
     /** Entry */
     public static void show(Context context) {
         Intent intent = new Intent(context, DashboardActivity.class);
-        intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY);
         context.startActivity(intent);
     }
 
@@ -32,7 +36,7 @@ public class DashboardActivity extends BaseActivity {
     private RecyclerView mRecyclerView;
 
     private DashboardProductAdapter productAdapter;
-    private List<String> productList = new ArrayList<String>();;
+    private List<Product> productList = new ArrayList<Product>();;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +45,6 @@ public class DashboardActivity extends BaseActivity {
         mBinding = DataBindingUtil.setContentView(DashboardActivity.this, R.layout.activity_dashboard);
 
         mRecyclerView = mBinding.recyclerView;
-        productList = Arrays.asList("sup1", "sup2", "sup3");
 
         //region Setup
         setUpProductAdapter();
@@ -50,7 +53,7 @@ public class DashboardActivity extends BaseActivity {
         //region Click
         RxUtils.clicks(mBinding.add)
                 .subscribe(view -> {
-                    ProductInfoActivity.show(this);
+//                    ProductInfoActivity.show(this);
                 });
 
         RxUtils.clicks(mBinding.logout)
@@ -60,15 +63,42 @@ public class DashboardActivity extends BaseActivity {
                     finish();
                 });
         //endregion
+
+        //region Retrieve Data
+        retrieveProducts();
+        //endregion
     }
 
+    //region Firebase
+    private void retrieveProducts() {
 
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        Query docRef = db.collection("product");
+
+        docRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+
+                if(!task.getResult().isEmpty()){
+
+                    productList.clear();
+                    for(DocumentSnapshot document : task.getResult().getDocuments()){
+                        Product product=document.toObject(Product.class);
+                        product.setId(document.getId());
+                        productList.add(product);
+                    }
+                    productAdapter.notifyDataSetChanged();
+                }
+            }
+        });
+    }
+    //endregion
 
     private void setUpProductAdapter() {
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(this, 2);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        productAdapter = new DashboardProductAdapter(productList);
+        productAdapter = new DashboardProductAdapter(productList, productId -> ProductInfoActivity.show(this,productId));
         mRecyclerView.setAdapter(productAdapter);
     }
 }

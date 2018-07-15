@@ -6,6 +6,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.mon.qrcodetrackingsystem.databinding.ItemDashboardProductBinding;
+import com.example.mon.qrcodetrackingsystem.modules.dashboard.objectmodel.Product;
+import com.example.mon.qrcodetrackingsystem.utils.RxUtils;
 
 import java.util.List;
 
@@ -15,10 +17,12 @@ import java.util.List;
 
 public class DashboardProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private List<String> mProductList;
+    private List<Product> mProductList;
+    private DashboardProductListener mListener;
 
-    public DashboardProductAdapter(List<String> mProductList) {
+    public DashboardProductAdapter(List<Product> mProductList, DashboardProductListener listener) {
         this.mProductList = mProductList;
+        this.mListener = listener;
     }
 
     @Override
@@ -34,8 +38,17 @@ public class DashboardProductAdapter extends RecyclerView.Adapter<RecyclerView.V
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        Product product = mProductList.get(position);
+
         DashBoardProductViewHolder productViewHolder = (DashBoardProductViewHolder)holder;
-        productViewHolder.mBinding.title.setText(mProductList.get(position));
+        productViewHolder.mBinding.title.setText(product.getName());
+
+        RxUtils.clicks(productViewHolder.mBinding.getRoot())
+                .subscribe(view -> {
+                    if(mListener != null){
+                        mListener.launchProductInfo(product.getId());
+                    }
+                });
     }
 
     @Override
@@ -50,5 +63,10 @@ public class DashboardProductAdapter extends RecyclerView.Adapter<RecyclerView.V
             super(binding.getRoot());
             this.mBinding = binding;
         }
+    }
+
+    public interface DashboardProductListener {
+        void launchProductInfo(String productId);
+
     }
 }
