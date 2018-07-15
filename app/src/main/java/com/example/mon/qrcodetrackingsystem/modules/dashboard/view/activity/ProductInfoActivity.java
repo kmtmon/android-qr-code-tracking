@@ -24,12 +24,14 @@ import java.util.List;
 
 public class ProductInfoActivity extends Activity {
 
+    //region Entry
     /** Entry */
     public static void show(Context context, String productId) {
         Intent intent = new Intent(context, ProductInfoActivity.class);
         intent.putExtra(ProductInfoActivity.PRODUCT_ID,productId);
         context.startActivity(intent);
     }
+    //endregion
 
     public static String PRODUCT_ID = "PRODUCT_ID";
 
@@ -88,11 +90,7 @@ public class ProductInfoActivity extends Activity {
                     mProduct=task.getResult().toObject(Product.class);
 
                     setUpProductInfo();
-                }else {
-                    Log.e(TAG,"get result is null");
                 }
-            }else{
-                Log.e(TAG,"task is not successful");
             }
         });
     }
@@ -115,7 +113,6 @@ public class ProductInfoActivity extends Activity {
                     mProduct.getDesc().isEmpty()){
                 return;
             }
-
             mBinding.product.setText(mProduct.getName());
             mBinding.description.setText(mProduct.getDesc());
         }

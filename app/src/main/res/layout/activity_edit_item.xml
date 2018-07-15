@@ -2,7 +2,10 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <data />
+    <data>
+        <import type="android.view.View" />
+        <variable name="view" type="com.example.mon.qrcodetrackingsystem.modules.dashboard.view.activity.EditItemActivity"/>
+    </data>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -211,16 +214,17 @@
                     android:layout_height="wrap_content"
                     android:text="Log"
                     style="@style/ButtonAppearance"
-                    android:background="@drawable/shape_rectangle_solid_primary"/>
+                    android:background="@drawable/shape_rectangle_solid_primary"
+                    android:visibility="@{view.isDisplayingInfo ? View.VISIBLE : View.GONE}"/>
 
                 <Button
-                    android:visibility="gone"
                     android:id="@+id/edit"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Edit"
                     style="@style/ButtonAppearance"
-                    android:background="@drawable/shape_rectangle_solid_primary"/>
+                    android:background="@drawable/shape_rectangle_solid_primary"
+                    android:visibility="@{view.isDisplayingInfo ? View.VISIBLE : View.GONE}"/>
 
                 <Button
                     android:id="@+id/add"
@@ -228,16 +232,17 @@
                     android:layout_height="wrap_content"
                     android:text="Add"
                     style="@style/ButtonAppearance"
-                    android:background="@drawable/shape_rectangle_solid_primary"/>
+                    android:background="@drawable/shape_rectangle_solid_primary"
+                    android:visibility="@{view.isNewItem ? View.VISIBLE : View.GONE}"/>
 
                 <Button
-                    android:visibility="gone"
                     android:id="@+id/save"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Save"
                     style="@style/ButtonAppearance"
-                    android:background="@drawable/shape_rectangle_solid_primary"/>
+                    android:background="@drawable/shape_rectangle_solid_primary"
+                    android:visibility="@{view.isEditing ? View.VISIBLE : View.GONE}"/>
 
             </LinearLayout>
 
