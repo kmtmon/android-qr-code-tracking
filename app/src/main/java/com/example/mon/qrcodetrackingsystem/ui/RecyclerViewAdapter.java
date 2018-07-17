@@ -1,6 +1,7 @@
 package com.example.mon.qrcodetrackingsystem.ui;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,8 @@ import com.example.mon.qrcodetrackingsystem.utils.RxUtils;
 import java.util.List;
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+
+    private String TAG = RecyclerViewAdapter.class.getSimpleName();
 
     private List<Object> objectList;
     private RecyclerViewAdapterListener mListener;
@@ -28,6 +31,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         ItemRecyclerViewBinding agentFinderBinding = ItemRecyclerViewBinding.inflate(inflater, parent, false);
         viewHolder = new RecyclerViewHolder(agentFinderBinding);
 
+        Log.e(TAG,objectList.size()+"");
+
         return viewHolder;
     }
 
@@ -39,18 +44,25 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         RecyclerViewHolder productViewHolder = (RecyclerViewHolder)holder;
 
         if(object instanceof Product){
+            Log.e(TAG,"Item is product");
             Product product = (Product) object;
             productViewHolder.mBinding.title.setText(product.getName());
         }
 
         if(object instanceof String){
+            Log.e(TAG,"Item is string");
             productViewHolder.mBinding.title.setText((String)object);
         }
 
         RxUtils.clicks(productViewHolder.mBinding.getRoot())
                 .subscribe(view -> {
+
+                    Log.e(TAG,"Item is clicked");
                     if(mListener != null){
+                        Log.e(TAG,"listener is not null");
                         mListener.clickOnItem(object);
+                    }else{
+                        Log.e(TAG,"listener is null");
                     }
                 });
     }

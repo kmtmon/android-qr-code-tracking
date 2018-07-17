@@ -94,11 +94,13 @@
                         android:textColor="@color/pale_black"/>
 
                     <!--Product-->
-                    <EditText
+                    <TextView
                         android:id="@+id/product"
                         style="@style/EditTextAppearance.Black"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/shape_fake_edittext_underline"/>
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -109,15 +111,17 @@
                         android:textColor="@color/pale_black"/>
 
                     <!--Status-->
-                    <EditText
+                    <TextView
                         android:id="@+id/status"
                         style="@style/EditTextAppearance.Black"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/shape_fake_edittext_underline"/>
 
                     <!--In Ware House Info -->
                     <LinearLayout
-                        android:visibility="gone"
+                        android:visibility="@{view.isStatusInWareHouse ? View.VISIBLE : View.GONE}"
                         android:id="@+id/in_warehouse_container"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"

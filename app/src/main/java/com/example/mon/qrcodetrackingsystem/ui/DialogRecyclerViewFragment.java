@@ -1,6 +1,7 @@
 package com.example.mon.qrcodetrackingsystem.ui;
 
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Context;
@@ -8,6 +9,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,8 +23,9 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class RecyclerViewFragment extends DialogFragment {
+public class DialogRecyclerViewFragment extends DialogFragment {
 
+    private String TAG = DialogRecyclerViewFragment.class.getSimpleName();
 
     private Window mWindow;
     private Context mContext;
@@ -32,11 +35,16 @@ public class RecyclerViewFragment extends DialogFragment {
     private RecyclerView mRecyclerView;
     private RecyclerViewAdapter.RecyclerViewAdapterListener mListener;
 
-    public RecyclerViewFragment() {
+    public DialogRecyclerViewFragment() {
         // Required empty public constructor
     }
 
-
+    @SuppressLint("ValidFragment")
+    public DialogRecyclerViewFragment(Context mContext, List<Object> objectList, RecyclerViewAdapter.RecyclerViewAdapterListener mListener) {
+        this.mListener = mListener;
+        this.mContext = mContext;
+        this.objectList = objectList;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -47,6 +55,9 @@ public class RecyclerViewFragment extends DialogFragment {
 
 
             DialogfragmentRecyclerviewBinding mBinding = DialogfragmentRecyclerviewBinding.inflate(inflater, container, false);
+            mRecyclerView = mBinding.recyclerView;
+
+            setUpItemListAdapter();
 
             return mBinding.getRoot();
         } catch (Exception e) {
@@ -64,6 +75,8 @@ public class RecyclerViewFragment extends DialogFragment {
 
         dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+
+
 
         return dialog;
     }
