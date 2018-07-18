@@ -7,19 +7,29 @@ import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.databinding.ObservableBoolean;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import com.example.mon.qrcodetrackingsystem.R;
 import com.example.mon.qrcodetrackingsystem.base.BaseActivity;
 import com.example.mon.qrcodetrackingsystem.databinding.ActivityEditItemBinding;
+import com.example.mon.qrcodetrackingsystem.manager.ItemLogManager;
+import com.example.mon.qrcodetrackingsystem.manager.ItemManager;
 import com.example.mon.qrcodetrackingsystem.manager.ItemStatusManager;
 import com.example.mon.qrcodetrackingsystem.manager.ProductManager;
 import com.example.mon.qrcodetrackingsystem.modules.dashboard.objectmodel.Item;
+import com.example.mon.qrcodetrackingsystem.modules.dashboard.objectmodel.ItemLog;
 import com.example.mon.qrcodetrackingsystem.modules.dashboard.objectmodel.Product;
 import com.example.mon.qrcodetrackingsystem.ui.DialogRecyclerViewFragment;
 import com.example.mon.qrcodetrackingsystem.ui.RecyclerViewAdapter;
 import com.example.mon.qrcodetrackingsystem.utils.RxUtils;
+import com.example.mon.qrcodetrackingsystem.utils.SharedPreferenceManager;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +55,9 @@ public class EditItemActivity extends BaseActivity implements RecyclerViewAdapte
     private String TAG = EditItemActivity.class.getSimpleName();
 
     ActivityEditItemBinding mBinding;
+    DialogRecyclerViewFragment dialogFragment;
 
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
     private Item mItem;
     private List<Product> mProductList = new ArrayList<Product>();
 
@@ -80,6 +92,23 @@ public class EditItemActivity extends BaseActivity implements RecyclerViewAdapte
                 .subscribe(view -> {
                     ItemLogActivity.show(this);
                 });
+
+        RxUtils.clicks(mBinding.add)
+                .subscribe(view -> {
+                    addItem();
+                });
+
+        RxUtils.clicks(mBinding.save)
+                .subscribe(view -> {
+                    saveItem();
+                });
+
+        RxUtils.clicks(mBinding.edit)
+                .subscribe(view -> {
+                    isNewItem.set(false);
+                    isDisplayingInfo.set(false);
+                    isEditing.set(true);
+                });
         //endregion
 
         //region Retrieve Product Data
@@ -103,7 +132,7 @@ public class EditItemActivity extends BaseActivity implements RecyclerViewAdapte
         }
     }
 
-    DialogRecyclerViewFragment dialogFragment;
+    //region Pop Up
 
     public void popUpProductDialog() {
         Fragment oldFrag = getFragmentManager().findFragmentByTag("dialogfragment");
@@ -153,4 +182,58 @@ public class EditItemActivity extends BaseActivity implements RecyclerViewAdapte
 
         dialogFragment.dismiss();
     }
+    //endregion
+
+    //region Add Item
+    private void addItem(){
+
+        if(mChosenProduct == null ||
+                mBinding.status.getText().toString() == null ||
+                mBinding.status.getText().toString().isEmpty()){
+            Toast.makeText(this, "Choose the product and status first", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        Item newItem = ItemManager.createNewItem(mChosenProduct.getId());
+
+
+
+        db.collection("item")
+                .add(newItem)
+                .addOnSuccessListener(documentReference -> {
+                    Log.d(TAG, "Item DocumentSnapshot written with ID: " + documentReference.getId());
+                    String newItemId = documentReference.getId();
+                    String currentUserId = SharedPreferenceManager.getInstance(this).getCurrentUserId();
+                    long unixTime = System.currentTimeMillis() / 1000L;
+
+                    ItemLog newItemLog = ItemLogManager.createNewItemLog(newItemId, currentUserId,unixTime,mBinding.status.getText().toString(),"");
+                    addItemLog(newItemLog);
+
+                    isNewItem.set(false);
+                    isDisplayingInfo.set(true);
+                    isEditing.set(false);
+                })
+                .addOnFailureListener(e -> Log.w(TAG, "Error adding document", e));
+
+
+    }
+
+    private void addItemLog(ItemLog log){
+        db.collection("log")
+                .add(log)
+                .addOnSuccessListener(documentReference -> {
+                    Log.d(TAG, "Log DocumentSnapshot written with ID: " + documentReference.getId());
+
+                })
+                .addOnFailureListener(e -> Log.w(TAG, "Error adding document", e));
+    }
+    //endregion
+
+    //region Save Item
+    private void saveItem(){
+        isNewItem.set(false);
+        isDisplayingInfo.set(true);
+        isEditing.set(false);
+    }
+    //endregion
 }

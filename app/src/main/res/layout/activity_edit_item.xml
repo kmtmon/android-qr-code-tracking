@@ -191,6 +191,7 @@
 
                     <!--Updated Label-->
                     <TextView
+                        android:visibility="@{(view.isNewItem || view.isStatusInWareHouse) ? View.GONE : View.VISIBLE}"
                         android:id="@+id/updatedAt"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
