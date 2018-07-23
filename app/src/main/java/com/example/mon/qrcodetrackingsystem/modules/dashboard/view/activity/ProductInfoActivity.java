@@ -11,7 +11,11 @@ import android.util.Log;
 
 import com.example.mon.qrcodetrackingsystem.R;
 import com.example.mon.qrcodetrackingsystem.databinding.ActivityProductInfoBinding;
+import com.example.mon.qrcodetrackingsystem.manager.ItemLogManager;
+import com.example.mon.qrcodetrackingsystem.manager.ItemManager;
+import com.example.mon.qrcodetrackingsystem.manager.ProductManager;
 import com.example.mon.qrcodetrackingsystem.modules.dashboard.objectmodel.Item;
+import com.example.mon.qrcodetrackingsystem.modules.dashboard.objectmodel.ItemLog;
 import com.example.mon.qrcodetrackingsystem.modules.dashboard.objectmodel.Product;
 import com.example.mon.qrcodetrackingsystem.modules.dashboard.view.adapter.ItemListAdapter;
 import com.google.firebase.firestore.DocumentReference;
@@ -43,7 +47,7 @@ public class ProductInfoActivity extends Activity {
     private String mProductId = null;
     private Product mProduct;
     private ItemListAdapter itemListAdapter;
-    private List<Item> itemList = new ArrayList<>();
+    private List<Item> mItemList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,39 +63,28 @@ public class ProductInfoActivity extends Activity {
 
         mRecyclerView = mBinding.recyclerView;
 
-        itemList.add(new Item());
-        itemList.add(new Item());
-        itemList.add(new Item());
-        itemList.add(new Item());
-        itemList.add(new Item());
-        itemList.add(new Item());
-        itemList.add(new Item());
-        itemList.add(new Item());
-        itemList.add(new Item());
-
         //region Setup
         setUpItemListAdapter();
         //endregion
 
         retrieveProductInfo();
+        retrieveItemWithProductId();
+
     }
 
     //region Firebase
     private void retrieveProductInfo(){
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        ProductManager.getInstance().retrieveProduct(mProductId, product -> {
+            mProduct=product;
+            setUpProductInfo();
+        });
+    }
 
-        DocumentReference docRef = db.collection("product").document(mProductId);
-
-        docRef.get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-
-                if(task.getResult() != null){
-
-                    mProduct=task.getResult().toObject(Product.class);
-
-                    setUpProductInfo();
-                }
-            }
+    private void retrieveItemWithProductId(){
+        ItemManager.getInstance().retrieveItems(mProductId, itemList -> {
+            mItemList.clear();
+            mItemList.addAll(itemList);
+            itemListAdapter.notifyDataSetChanged();
         });
     }
     //endregion
@@ -100,7 +93,7 @@ public class ProductInfoActivity extends Activity {
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        itemListAdapter = new ItemListAdapter(itemList);
+        itemListAdapter = new ItemListAdapter(mItemList);
         mRecyclerView.setAdapter(itemListAdapter);
     }
 

@@ -3,6 +3,7 @@ package com.example.mon.qrcodetrackingsystem.manager;
 import android.util.Log;
 
 import com.example.mon.qrcodetrackingsystem.modules.dashboard.objectmodel.Product;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
@@ -22,6 +23,24 @@ public class ProductManager {
             }
             return mInstance;
         }
+    }
+
+    public void retrieveProduct(String productId, ProductOnCompletionListener mListner) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        DocumentReference docRef = db.collection("product").document(productId);
+
+        docRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+
+                if(task.getResult() != null){
+
+                    Product product=task.getResult().toObject(Product.class);
+
+                    mListner.ProductOnCompletionListener(product);
+                }
+            }
+        });
     }
 
     public void retrieveProducts(OnCompletionListener mListener) {
@@ -45,12 +64,15 @@ public class ProductManager {
                 }
             }
 
-//            Log.d(TAG,""+productList.size());
             mListener.OnCompletionListener(productList);
         });
     }
 
     public interface OnCompletionListener {
         void OnCompletionListener(List<Product> productList);
+    }
+
+    public interface ProductOnCompletionListener {
+        void ProductOnCompletionListener(Product product);
     }
 }

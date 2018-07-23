@@ -11,6 +11,7 @@ import android.util.Log;
 import com.example.mon.qrcodetrackingsystem.R;
 import com.example.mon.qrcodetrackingsystem.base.BaseActivity;
 import com.example.mon.qrcodetrackingsystem.databinding.ActivityDashboardBinding;
+import com.example.mon.qrcodetrackingsystem.manager.ItemLogManager;
 import com.example.mon.qrcodetrackingsystem.manager.ProductManager;
 import com.example.mon.qrcodetrackingsystem.modules.dashboard.objectmodel.Product;
 import com.example.mon.qrcodetrackingsystem.modules.dashboard.view.adapter.DashboardProductAdapter;
@@ -72,6 +73,7 @@ public class DashboardActivity extends BaseActivity {
             productAdapter.notifyDataSetChanged();
         });
         //endregion
+
     }
 
     private void setUpProductAdapter() {

@@ -194,7 +194,7 @@ public class EditItemActivity extends BaseActivity implements RecyclerViewAdapte
             return;
         }
 
-        Item newItem = ItemManager.createNewItem(mChosenProduct.getId());
+        Item newItem = ItemManager.getInstance().createNewItem(mChosenProduct.getId());
 
 
 
@@ -206,7 +206,7 @@ public class EditItemActivity extends BaseActivity implements RecyclerViewAdapte
                     String currentUserId = SharedPreferenceManager.getInstance(this).getCurrentUserId();
                     long unixTime = System.currentTimeMillis() / 1000L;
 
-                    ItemLog newItemLog = ItemLogManager.createNewItemLog(newItemId, currentUserId,unixTime,mBinding.status.getText().toString(),"");
+                    ItemLog newItemLog = ItemLogManager.getInstance().createNewItemLog(newItemId, currentUserId,unixTime,mBinding.status.getText().toString(),"");
                     addItemLog(newItemLog);
 
                     isNewItem.set(false);

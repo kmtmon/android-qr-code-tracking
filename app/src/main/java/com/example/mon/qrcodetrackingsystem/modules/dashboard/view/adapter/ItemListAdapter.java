@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import com.example.mon.qrcodetrackingsystem.databinding.ItemItemBinding;
+import com.example.mon.qrcodetrackingsystem.manager.ItemLogManager;
 import com.example.mon.qrcodetrackingsystem.modules.dashboard.objectmodel.Item;
 
 import java.util.List;
@@ -13,7 +14,7 @@ import java.util.List;
  * Created by mon on 12/7/18.
  */
 
-public class ItemListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
+public class ItemListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private List<Item> mItemList;
 
@@ -34,7 +35,26 @@ public class ItemListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        ItemViewHolder productViewHolder = (ItemViewHolder)holder;
+        ItemViewHolder mViewHolder = (ItemViewHolder) holder;
+
+        Item mItem = mItemList.get(position);
+
+        if (mItem.getId() != null) {
+            mViewHolder.mBinding.serialnumber.setText(mItem.getId());
+
+            mViewHolder.mBinding.status.setText("");
+            mViewHolder.mBinding.remark.setText("");
+
+            ItemLogManager.getInstance().retrieveLatestItemLog(mItem.getId(), itemLog -> {
+                if (itemLog.status != null) {
+                    mViewHolder.mBinding.status.setText(itemLog.status);
+                }
+
+                if (itemLog.remark != null) {
+                    mViewHolder.mBinding.remark.setText(itemLog.remark);
+                }
+            });
+        }
     }
 
     @Override
