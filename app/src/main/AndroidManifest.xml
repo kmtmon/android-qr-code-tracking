@@ -4,6 +4,7 @@
 
     <application
         android:allowBackup="true"
+        android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
@@ -16,12 +17,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".modules.login.view.activity.LoginActivity">
-        </activity>
+        <activity android:name=".modules.login.view.activity.LoginActivity"></activity>
         <activity android:name=".modules.dashboard.view.activity.DashboardActivity" />
         <activity android:name=".modules.dashboard.view.activity.EditItemActivity" />
         <activity android:name=".modules.dashboard.view.activity.ItemLogActivity" />
-        <activity android:name=".modules.dashboard.view.activity.ProductInfoActivity"></activity>
+        <activity android:name=".modules.dashboard.view.activity.ProductInfoActivity" />
+        <activity android:name=".modules.dashboard.view.activity.ItemQRActivity"></activity>
     </application>
 
 </manifest>

@@ -63,6 +63,13 @@
 
                     </RelativeLayout>
 
+                    <TextView
+                        android:visibility="@{view.isDisplayingInfo ? View.VISIBLE : View.GONE}"
+                        android:id="@+id/qr"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="QR Code"/>
+
                 </LinearLayout>
 
             </android.support.v7.widget.Toolbar>
@@ -240,6 +247,7 @@
                     android:background="@drawable/shape_rectangle_solid_primary"
                     android:visibility="@{view.isDisplayingInfo ? View.VISIBLE : View.GONE}"/>
 
+
                 <Button
                     android:id="@+id/add"
                     android:layout_width="match_parent"
@@ -254,6 +262,15 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Save"
+                    style="@style/ButtonAppearance"
+                    android:background="@drawable/shape_rectangle_solid_primary"
+                    android:visibility="@{view.isEditing ? View.VISIBLE : View.GONE}"/>
+
+                <Button
+                    android:id="@+id/cancel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Cancel"
                     style="@style/ButtonAppearance"
                     android:background="@drawable/shape_rectangle_solid_primary"
                     android:visibility="@{view.isEditing ? View.VISIBLE : View.GONE}"/>

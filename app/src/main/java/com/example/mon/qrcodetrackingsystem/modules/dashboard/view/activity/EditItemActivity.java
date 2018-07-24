@@ -31,6 +31,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -88,6 +89,11 @@ public class EditItemActivity extends BaseActivity implements RecyclerViewAdapte
 
 
         //region Click
+        RxUtils.clicks(mBinding.qr)
+                .subscribe(view -> {
+                    generateQR();
+                });
+
         RxUtils.clicks(mBinding.product)
                 .subscribe(view -> {
                     if (isEditing.get())
@@ -113,6 +119,13 @@ public class EditItemActivity extends BaseActivity implements RecyclerViewAdapte
         RxUtils.clicks(mBinding.save)
                 .subscribe(view -> {
                     saveItem();
+                });
+
+        RxUtils.clicks(mBinding.cancel)
+                .subscribe(view -> {
+                    isNewItem.set(false);
+                    isDisplayingInfo.set(true);
+                    isEditing.set(false);
                 });
 
         RxUtils.clicks(mBinding.edit)
@@ -186,6 +199,19 @@ public class EditItemActivity extends BaseActivity implements RecyclerViewAdapte
             });
         }
     }
+
+    //region QR
+    private void generateQR(){
+
+        if(mItem == null){
+            return;
+        }
+        Gson gson = new Gson();
+        String json = gson.toJson(mItem);
+
+        ItemQRActivity.show(this,json);
+    }
+    //endregion
 
     //region Pop Up
 
