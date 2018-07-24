@@ -24,6 +24,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
+import android.text.format.DateFormat;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.View;
@@ -56,6 +57,7 @@ import java.util.regex.Pattern;
 
 public class Utils {
     public static final String TAG = Utils.class.getSimpleName();
+
     @NonNull
     public static void hideSoftKeyboard(Activity activity) {
         View view = activity.getCurrentFocus();
@@ -67,5 +69,17 @@ public class Utils {
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
 
         }
+    }
+
+    public static String getTimeStringFromTimeStamp(long timestamp) {
+        try {
+            Calendar cal = Calendar.getInstance(Locale.ENGLISH);
+            cal.setTimeInMillis(timestamp * 1000L);
+            String date = DateFormat.format("hh:mm a dd MMM yyyy", cal).toString();
+            return date;
+        } catch (Exception e) {
+
+        }
+        return "";
     }
 }

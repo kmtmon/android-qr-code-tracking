@@ -29,7 +29,7 @@
             android:textColor="@color/pale_black" />
 
         <TextView
-            android:id="@+id/location"
+            android:id="@+id/remark"
             style="@style/TextAppearance.Tiny"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

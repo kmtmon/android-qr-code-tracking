@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 
 import com.example.mon.qrcodetrackingsystem.databinding.ItemLogBinding;
 import com.example.mon.qrcodetrackingsystem.modules.dashboard.objectmodel.ItemLog;
+import com.example.mon.qrcodetrackingsystem.utils.Utils;
 
 import java.util.List;
 
@@ -14,7 +15,7 @@ import java.util.List;
  * Created by mon on 12/7/18.
  */
 
-public class ItemLogAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
+public class ItemLogAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<ItemLog> mItemLogList;
 
     public ItemLogAdapter(List<ItemLog> mItemLogList) {
@@ -34,7 +35,21 @@ public class ItemLogAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        ItemLogViewHolder productViewHolder = (ItemLogViewHolder)holder;
+        ItemLogViewHolder viewHolder = (ItemLogViewHolder) holder;
+
+        ItemLog log = mItemLogList.get(position);
+        if (log.timestamp != 0) {
+            viewHolder.mBinding.updateTime.setText(Utils.getTimeStringFromTimeStamp(log.timestamp));
+        }
+
+        if (log.status != null) {
+            viewHolder.mBinding.updateMessage.setText(log.status);
+        }
+
+        viewHolder.mBinding.remark.setText("");
+        if (log.remark != null) {
+            viewHolder.mBinding.remark.setText(log.remark);
+        }
     }
 
     @Override
