@@ -1,6 +1,7 @@
 package com.example.mon.qrcodetrackingsystem.manager;
 
 import com.example.mon.qrcodetrackingsystem.modules.dashboard.objectmodel.Item;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
@@ -27,6 +28,26 @@ public class ItemManager {
         return  newItem;
     }
 
+    public void retrieveItem(String itemId, ItemOnCompletionListener mListener) {
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        DocumentReference docRef = db.collection("item").document(itemId);
+
+        docRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+
+                if(task.getResult() != null){
+
+                    Item obj=task.getResult().toObject(Item.class);
+                    obj.setId(task.getResult().getId());
+
+                    mListener.ItemOnCompletionListener(obj);
+                }
+            }
+        });
+    }
+
     public void retrieveItems(String productId, OnCompletionListener mListener) {
 
         List<Item> itemList = new ArrayList<Item>();
@@ -50,6 +71,10 @@ public class ItemManager {
 
             mListener.OnCompletionListener(itemList);
         });
+    }
+
+    public interface ItemOnCompletionListener {
+        void ItemOnCompletionListener(Item item);
     }
 
     public interface OnCompletionListener {

@@ -58,6 +58,7 @@ public class EditItemActivity extends BaseActivity implements RecyclerViewAdapte
     DialogRecyclerViewFragment dialogFragment;
 
     FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private String mItemId = null;
     private Item mItem;
     private List<Product> mProductList = new ArrayList<Product>();
 
@@ -75,7 +76,15 @@ public class EditItemActivity extends BaseActivity implements RecyclerViewAdapte
         mBinding = DataBindingUtil.setContentView(EditItemActivity.this, R.layout.activity_edit_item);
         mBinding.setView(EditItemActivity.this);
 
+        mItemId = getIntent().getStringExtra(EditItemActivity.ITEM_ID);
+
+        ItemManager.getInstance().retrieveItem(mItemId, item -> {
+            mItem = item;
+            setUpItemInfo();
+        });
+
         setUpForm();
+
 
         //region Click
         RxUtils.clicks(mBinding.product)
@@ -121,7 +130,7 @@ public class EditItemActivity extends BaseActivity implements RecyclerViewAdapte
     }
 
     private void setUpForm(){
-        if(mItem == null){
+        if(mItemId == null){
             isNewItem.set(true);
             isDisplayingInfo.set(false);
             isEditing.set(false);
@@ -129,6 +138,31 @@ public class EditItemActivity extends BaseActivity implements RecyclerViewAdapte
             isNewItem.set(false);
             isDisplayingInfo.set(true);
             isEditing.set(false);
+        }
+    }
+
+    private void setUpItemInfo() {
+        if(mItem == null){
+            return;
+        }
+
+        if(mItem.getProductID()!= null){
+            ProductManager.getInstance().retrieveProduct(mItem.getProductID(), product -> {
+                if(product.getName() != null){
+                    mBinding.product.setText(product.getName());
+                }
+            });
+
+            ItemLogManager.getInstance().retrieveLatestItemLog(mItem.getId(), itemLog -> {
+                if(itemLog.status != null){
+                    mBinding.status.setText(itemLog.status);
+                }
+
+
+                if(itemLog.remark != null){
+
+                }
+            });
         }
     }
 

@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import com.example.mon.qrcodetrackingsystem.databinding.ItemItemBinding;
 import com.example.mon.qrcodetrackingsystem.manager.ItemLogManager;
 import com.example.mon.qrcodetrackingsystem.modules.dashboard.objectmodel.Item;
+import com.example.mon.qrcodetrackingsystem.utils.RxUtils;
 
 import java.util.List;
 
@@ -17,9 +18,11 @@ import java.util.List;
 public class ItemListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private List<Item> mItemList;
+    private ItemListAdapterListner mListner;
 
-    public ItemListAdapter(List<Item> mItemList) {
+    public ItemListAdapter(List<Item> mItemList, ItemListAdapterListner listner) {
         this.mItemList = mItemList;
+        this.mListner = listner;
     }
 
     @Override
@@ -55,6 +58,13 @@ public class ItemListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 }
             });
         }
+
+        RxUtils.clicks(mViewHolder.mBinding.getRoot())
+                .subscribe(view ->{
+                    if(mListner != null){
+                        mListner.clickOnItem(mItem);
+                    }
+                });
     }
 
     @Override
@@ -69,5 +79,9 @@ public class ItemListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             super(mBinding.getRoot());
             this.mBinding = mBinding;
         }
+    }
+
+    public interface ItemListAdapterListner {
+        void clickOnItem(Item item);
     }
 }

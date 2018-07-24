@@ -26,7 +26,7 @@ import com.google.firebase.firestore.Query;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProductInfoActivity extends Activity {
+public class ProductInfoActivity extends Activity implements ItemListAdapter.ItemListAdapterListner {
 
     //region Entry
     /** Entry */
@@ -69,7 +69,6 @@ public class ProductInfoActivity extends Activity {
 
         retrieveProductInfo();
         retrieveItemWithProductId();
-
     }
 
     //region Firebase
@@ -93,7 +92,7 @@ public class ProductInfoActivity extends Activity {
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        itemListAdapter = new ItemListAdapter(mItemList);
+        itemListAdapter = new ItemListAdapter(mItemList,this);
         mRecyclerView.setAdapter(itemListAdapter);
     }
 
@@ -108,6 +107,13 @@ public class ProductInfoActivity extends Activity {
             }
             mBinding.product.setText(mProduct.getName());
             mBinding.description.setText(mProduct.getDesc());
+        }
+    }
+
+    @Override
+    public void clickOnItem(Item item) {
+        if(item.getId() != null){
+            EditItemActivity.show(this,item.getId());
         }
     }
 }
