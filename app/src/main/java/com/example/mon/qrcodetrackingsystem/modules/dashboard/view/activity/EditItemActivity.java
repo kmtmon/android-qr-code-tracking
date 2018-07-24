@@ -99,7 +99,7 @@ public class EditItemActivity extends BaseActivity implements RecyclerViewAdapte
 
         RxUtils.clicks(mBinding.log)
                 .subscribe(view -> {
-                    ItemLogActivity.show(this);
+                    ItemLogActivity.show(this,mItemId);
                 });
 
         RxUtils.clicks(mBinding.add)
