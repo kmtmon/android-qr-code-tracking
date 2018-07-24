@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.mon.qrcodetrackingsystem">
 
+    <uses-permission android:name="android.permission.CAMERA" />
+
     <application
         android:allowBackup="true"
         android:hardwareAccelerated="true"
@@ -17,12 +19,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".modules.login.view.activity.LoginActivity"></activity>
+        <activity android:name=".modules.login.view.activity.LoginActivity" />
         <activity android:name=".modules.dashboard.view.activity.DashboardActivity" />
         <activity android:name=".modules.dashboard.view.activity.EditItemActivity" />
         <activity android:name=".modules.dashboard.view.activity.ItemLogActivity" />
         <activity android:name=".modules.dashboard.view.activity.ProductInfoActivity" />
-        <activity android:name=".modules.dashboard.view.activity.ItemQRActivity"></activity>
+        <activity android:name=".modules.dashboard.view.activity.ItemQRActivity" />
+        <activity android:name=".modules.scanner.SimpleScannerActivity"></activity>
     </application>
 
 </manifest>

@@ -2,12 +2,16 @@ package com.example.mon.qrcodetrackingsystem.modules.dashboard.view.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 
+import com.example.mon.qrcodetrackingsystem.Manifest;
 import com.example.mon.qrcodetrackingsystem.R;
 import com.example.mon.qrcodetrackingsystem.base.BaseActivity;
 import com.example.mon.qrcodetrackingsystem.databinding.ActivityDashboardBinding;
@@ -16,8 +20,11 @@ import com.example.mon.qrcodetrackingsystem.manager.ProductManager;
 import com.example.mon.qrcodetrackingsystem.modules.dashboard.objectmodel.Product;
 import com.example.mon.qrcodetrackingsystem.modules.dashboard.view.adapter.DashboardProductAdapter;
 import com.example.mon.qrcodetrackingsystem.modules.login.view.activity.LoginActivity;
+import com.example.mon.qrcodetrackingsystem.modules.scanner.SimpleScannerActivity;
 import com.example.mon.qrcodetrackingsystem.utils.RxUtils;
 import com.example.mon.qrcodetrackingsystem.utils.SharedPreferenceManager;
+
+import static android.Manifest.permission.CAMERA;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,6 +71,20 @@ public class DashboardActivity extends BaseActivity {
                     LoginActivity.show(this);
                     finish();
                 });
+
+        RxUtils.clicks(mBinding.scanner)
+                .subscribe(view ->{
+                    if(ContextCompat.checkSelfPermission(getApplicationContext(), CAMERA) == PackageManager.PERMISSION_GRANTED){
+                        SimpleScannerActivity.show(this);
+                    }else{
+                        ActivityCompat.requestPermissions(this,
+                                new String[]{CAMERA},
+                                1);
+                    }
+
+                });
+
+
         //endregion
 
         //region Retrieve Data
