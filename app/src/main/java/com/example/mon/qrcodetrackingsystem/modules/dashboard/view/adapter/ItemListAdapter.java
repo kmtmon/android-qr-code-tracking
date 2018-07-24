@@ -2,6 +2,7 @@ package com.example.mon.qrcodetrackingsystem.modules.dashboard.view.adapter;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.mon.qrcodetrackingsystem.databinding.ItemItemBinding;
@@ -46,14 +47,15 @@ public class ItemListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             mViewHolder.mBinding.serialnumber.setText(mItem.getId());
 
             mViewHolder.mBinding.status.setText("");
-            mViewHolder.mBinding.remark.setText("");
+            mViewHolder.mBinding.remark.setVisibility(View.GONE);
 
             ItemLogManager.getInstance().retrieveLatestItemLog(mItem.getId(), itemLog -> {
                 if (itemLog.status != null) {
-                    mViewHolder.mBinding.status.setText(itemLog.status);
+                    mViewHolder.mBinding.status.setText("ID: "+itemLog.status);
                 }
 
-                if (itemLog.remark != null) {
+                if (itemLog.remark != null && !itemLog.remark.isEmpty()) {
+                    mViewHolder.mBinding.remark.setVisibility(View.VISIBLE);
                     mViewHolder.mBinding.remark.setText(itemLog.remark);
                 }
             });

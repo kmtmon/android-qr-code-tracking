@@ -71,6 +71,12 @@ public class ProductInfoActivity extends Activity implements ItemListAdapter.Ite
         retrieveItemWithProductId();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        retrieveItemWithProductId();
+    }
+
     //region Firebase
     private void retrieveProductInfo(){
         ProductManager.getInstance().retrieveProduct(mProductId, product -> {

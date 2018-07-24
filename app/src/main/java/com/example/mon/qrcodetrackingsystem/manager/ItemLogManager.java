@@ -50,6 +50,7 @@ public class ItemLogManager {
                         obj.setId(document.getId());
                         list.add(obj);
                     }
+                    Collections.sort(list);
                 }
             }
 

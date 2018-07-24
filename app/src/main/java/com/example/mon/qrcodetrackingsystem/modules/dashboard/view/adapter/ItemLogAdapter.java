@@ -46,8 +46,9 @@ public class ItemLogAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             viewHolder.mBinding.updateMessage.setText(log.status);
         }
 
-        viewHolder.mBinding.remark.setText("");
-        if (log.remark != null) {
+        viewHolder.mBinding.remark.setVisibility(View.GONE);
+        if (log.remark != null && !log.remark.isEmpty()) {
+            viewHolder.mBinding.remark.setVisibility(View.VISIBLE);;
             viewHolder.mBinding.remark.setText(log.remark);
         }
     }

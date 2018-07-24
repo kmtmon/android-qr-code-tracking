@@ -26,6 +26,7 @@ import com.example.mon.qrcodetrackingsystem.ui.DialogRecyclerViewFragment;
 import com.example.mon.qrcodetrackingsystem.ui.RecyclerViewAdapter;
 import com.example.mon.qrcodetrackingsystem.utils.RxUtils;
 import com.example.mon.qrcodetrackingsystem.utils.SharedPreferenceManager;
+import com.example.mon.qrcodetrackingsystem.utils.Utils;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentReference;
@@ -44,7 +45,7 @@ public class EditItemActivity extends BaseActivity implements RecyclerViewAdapte
         context.startActivity(intent);
     }
 
-    public static void show(Context context,String itemId) {
+    public static void show(Context context, String itemId) {
         Intent intent = new Intent(context, EditItemActivity.class);
         intent.putExtra(EditItemActivity.ITEM_ID, itemId);
         context.startActivity(intent);
@@ -64,10 +65,10 @@ public class EditItemActivity extends BaseActivity implements RecyclerViewAdapte
 
     private Product mChosenProduct;
 
-    public ObservableBoolean isNewItem         = new ObservableBoolean(false);
-    public ObservableBoolean isDisplayingInfo  = new ObservableBoolean(false);
-    public ObservableBoolean isEditing         = new ObservableBoolean(false);
-    public ObservableBoolean isStatusInWareHouse         = new ObservableBoolean(false);
+    public ObservableBoolean isNewItem = new ObservableBoolean(false);
+    public ObservableBoolean isDisplayingInfo = new ObservableBoolean(false);
+    public ObservableBoolean isEditing = new ObservableBoolean(false);
+    public ObservableBoolean isStatusInWareHouse = new ObservableBoolean(false);
 
 
     @Override
@@ -89,17 +90,19 @@ public class EditItemActivity extends BaseActivity implements RecyclerViewAdapte
         //region Click
         RxUtils.clicks(mBinding.product)
                 .subscribe(view -> {
-                    popUpProductDialog();
+                    if (isEditing.get())
+                        popUpProductDialog();
                 });
 
         RxUtils.clicks(mBinding.status)
                 .subscribe(view -> {
-                    popUpStatusDialog();
+                    if (isEditing.get())
+                        popUpStatusDialog();
                 });
 
         RxUtils.clicks(mBinding.log)
                 .subscribe(view -> {
-                    ItemLogActivity.show(this,mItemId);
+                    ItemLogActivity.show(this, mItemId);
                 });
 
         RxUtils.clicks(mBinding.add)
@@ -129,12 +132,12 @@ public class EditItemActivity extends BaseActivity implements RecyclerViewAdapte
 
     }
 
-    private void setUpForm(){
-        if(mItemId == null){
+    private void setUpForm() {
+        if (mItemId == null) {
             isNewItem.set(true);
             isDisplayingInfo.set(false);
             isEditing.set(false);
-        }else{
+        } else {
             isNewItem.set(false);
             isDisplayingInfo.set(true);
             isEditing.set(false);
@@ -142,25 +145,43 @@ public class EditItemActivity extends BaseActivity implements RecyclerViewAdapte
     }
 
     private void setUpItemInfo() {
-        if(mItem == null){
+        if (mItem == null) {
             return;
         }
 
-        if(mItem.getProductID()!= null){
+        if (mItem.getProductID() != null) {
             ProductManager.getInstance().retrieveProduct(mItem.getProductID(), product -> {
-                if(product.getName() != null){
+                if (product.getName() != null) {
                     mBinding.product.setText(product.getName());
                 }
             });
 
             ItemLogManager.getInstance().retrieveLatestItemLog(mItem.getId(), itemLog -> {
-                if(itemLog.status != null){
+                if (itemLog.status != null) {
                     mBinding.status.setText(itemLog.status);
+
+                    if (itemLog.timestamp != 0) {
+                        mBinding.updatedAt.setText("Last updated at " + Utils.getTimeStringFromTimeStamp(itemLog.timestamp));
+                    }
                 }
 
+                if (itemLog.status.equalsIgnoreCase(ItemStatusManager.IN_WAREHOUSE)) {
+                    isStatusInWareHouse.set(true);
+                    if(itemLog.remark != null && !itemLog.remark.isEmpty()) {
+                        String[] parts = itemLog.remark.split("-");
 
-                if(itemLog.remark != null){
+                        if (parts.length == 4){
+                            String formatted_FloorLevel = parts[0].replace("FL","");
+                            String formatted_RackNumber = parts[1].replace("RN","");
+                            String formatted_RackLevel = parts[2].replace("RL","");
+                            String formatted_RackColumn = parts[3].replace("RC","");
 
+                            mBinding.floorlevel.setText(formatted_FloorLevel);
+                            mBinding.racknumber.setText(formatted_RackNumber);
+                            mBinding.racklevel.setText(formatted_RackLevel);
+                            mBinding.rackcolumn.setText(formatted_RackColumn);
+                        }
+                    }
                 }
             });
         }
@@ -178,7 +199,7 @@ public class EditItemActivity extends BaseActivity implements RecyclerViewAdapte
         List<Object> objectList = new ArrayList<>();
         objectList.addAll(mProductList);
 
-        dialogFragment = new DialogRecyclerViewFragment(this,objectList, this);
+        dialogFragment = new DialogRecyclerViewFragment(this, objectList, this);
 
         dialogFragment.show(fragmentTransaction, "dialogfragment");
     }
@@ -193,21 +214,21 @@ public class EditItemActivity extends BaseActivity implements RecyclerViewAdapte
         List<Object> objectList = new ArrayList<>();
         objectList.addAll(ItemStatusManager.getStatusArray());
 
-        dialogFragment = new DialogRecyclerViewFragment(this,objectList, this);
+        dialogFragment = new DialogRecyclerViewFragment(this, objectList, this);
 
         dialogFragment.show(fragmentTransaction, "dialogfragment");
     }
 
     @Override
     public void clickOnItem(Object object) {
-        if(object instanceof Product){
+        if (object instanceof Product) {
 
             Product product = (Product) object;
             mChosenProduct = product;
             mBinding.product.setText(product.getName());
         }
 
-        if(object instanceof String){
+        if (object instanceof String) {
             String status = (String) object;
             mBinding.status.setText(status);
 
@@ -219,28 +240,37 @@ public class EditItemActivity extends BaseActivity implements RecyclerViewAdapte
     //endregion
 
     //region Add Item
-    private void addItem(){
+    private void addItem() {
 
-        if(mChosenProduct == null ||
+        if (mChosenProduct == null ||
                 mBinding.status.getText().toString() == null ||
-                mBinding.status.getText().toString().isEmpty()){
+                mBinding.status.getText().toString().isEmpty()) {
             Toast.makeText(this, "Choose the product and status first", Toast.LENGTH_LONG).show();
             return;
         }
 
         Item newItem = ItemManager.getInstance().createNewItem(mChosenProduct.getId());
 
-
-
         db.collection("item")
                 .add(newItem)
                 .addOnSuccessListener(documentReference -> {
+
                     Log.d(TAG, "Item DocumentSnapshot written with ID: " + documentReference.getId());
+
                     String newItemId = documentReference.getId();
                     String currentUserId = SharedPreferenceManager.getInstance(this).getCurrentUserId();
                     long unixTime = System.currentTimeMillis() / 1000L;
 
-                    ItemLog newItemLog = ItemLogManager.getInstance().createNewItemLog(newItemId, currentUserId,unixTime,mBinding.status.getText().toString(),"");
+                    String mRemark = "";
+                    if (mBinding.status.getText().toString().equalsIgnoreCase(ItemStatusManager.IN_WAREHOUSE)) {
+                        mRemark = "FL" + mBinding.floorlevel.getText().toString() + "-" +
+                                "RN" + mBinding.racknumber.getText().toString() + "-" +
+                                "RL" + mBinding.racklevel.getText().toString() + "-" +
+                                "RC" + mBinding.rackcolumn.getText().toString();
+                    }
+
+
+                    ItemLog newItemLog = ItemLogManager.getInstance().createNewItemLog(newItemId, currentUserId, unixTime, mBinding.status.getText().toString(), mRemark);
                     addItemLog(newItemLog);
 
                     isNewItem.set(false);
@@ -252,7 +282,7 @@ public class EditItemActivity extends BaseActivity implements RecyclerViewAdapte
 
     }
 
-    private void addItemLog(ItemLog log){
+    private void addItemLog(ItemLog log) {
         db.collection("log")
                 .add(log)
                 .addOnSuccessListener(documentReference -> {
@@ -264,10 +294,40 @@ public class EditItemActivity extends BaseActivity implements RecyclerViewAdapte
     //endregion
 
     //region Save Item
-    private void saveItem(){
-        isNewItem.set(false);
-        isDisplayingInfo.set(true);
-        isEditing.set(false);
+    private void saveItem() {
+
+        if (okayToSave()) {
+
+            String currentUserId = SharedPreferenceManager.getInstance(this).getCurrentUserId();
+            long unixTime = System.currentTimeMillis() / 1000L;
+
+            String mRemark = "";
+            if (mBinding.status.getText().toString().equalsIgnoreCase(ItemStatusManager.IN_WAREHOUSE)) {
+                mRemark = "FL" + mBinding.floorlevel.getText().toString() + "-" +
+                        "RN" + mBinding.racknumber.getText().toString() + "-" +
+                        "RL" + mBinding.racklevel.getText().toString() + "-" +
+                        "RC" + mBinding.rackcolumn.getText().toString();
+            }
+
+            ItemLog newItemLog = ItemLogManager.getInstance().createNewItemLog(mItemId, currentUserId, unixTime, mBinding.status.getText().toString(), mRemark);
+            addItemLog(newItemLog);
+
+            isNewItem.set(false);
+            isDisplayingInfo.set(true);
+            isEditing.set(false);
+
+            mBinding.updatedAt.setText("Last updated at " + Utils.getTimeStringFromTimeStamp(newItemLog.timestamp));
+        } else {
+            Toast.makeText(this, "Unable to save please check your input",
+                    Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private boolean okayToSave() {
+        if (mItem == null) {
+            return false;
+        }
+        return true;
     }
     //endregion
 }

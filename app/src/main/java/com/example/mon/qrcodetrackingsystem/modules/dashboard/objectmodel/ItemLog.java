@@ -33,6 +33,7 @@ public class ItemLog implements Comparable<ItemLog>{
 
     @Override
     public int compareTo(@NonNull ItemLog itemLog) {
-        return Long.compare(this.timestamp, itemLog.timestamp);
+        /** Sort Decending Timestamp */
+        return Long.compare(itemLog.timestamp, this.timestamp);
     }
 }
