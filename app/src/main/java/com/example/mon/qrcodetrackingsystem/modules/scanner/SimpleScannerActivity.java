@@ -6,6 +6,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.example.mon.qrcodetrackingsystem.modules.dashboard.objectmodel.Item;
+import com.example.mon.qrcodetrackingsystem.modules.dashboard.view.activity.EditItemActivity;
+import com.google.gson.Gson;
 import com.google.zxing.Result;
 
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
@@ -45,8 +48,19 @@ public class SimpleScannerActivity extends Activity implements ZXingScannerView.
     @Override
     public void handleResult(Result rawResult) {
         // Do something with the result here
-        Log.v(TAG, rawResult.getText()); // Prints scan results
-        Log.v(TAG, rawResult.getBarcodeFormat().toString()); // Prints the scan format (qrcode, pdf417 etc.)
+        Log.d(TAG, "Raw Text "+rawResult.getText()); // Prints scan results
+        try{
+            Gson gson = new Gson();
+            Item item = gson.fromJson(rawResult.getText(),Item.class);
+            if(item.getId() != null){
+                finish();
+                EditItemActivity.show(this,item.getId());
+            }
+
+        }catch(Exception e){
+            Log.e(TAG, "Cannot convert to object");
+        }
+
 
         // If you would like to resume scanning, call this method below:
         mScannerView.resumeCameraPreview(this);

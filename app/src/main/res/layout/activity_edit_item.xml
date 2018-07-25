@@ -38,7 +38,7 @@
                     android:orientation="horizontal">
 
                     <View
-                        android:layout_width="44dp"
+                        android:layout_width="90dp"
                         android:layout_height="wrap_content" />
 
                     <!-- Header Text layout -->
@@ -63,12 +63,15 @@
 
                     </RelativeLayout>
 
-                    <TextView
+                    <ImageView
                         android:visibility="@{view.isDisplayingInfo ? View.VISIBLE : View.GONE}"
                         android:id="@+id/qr"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="QR Code"/>
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginRight="10dp"
+                        android:src="@drawable/icon_qr_code"/>
+
+
 
                 </LinearLayout>
 

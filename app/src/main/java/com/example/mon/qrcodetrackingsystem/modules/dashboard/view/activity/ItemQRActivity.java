@@ -40,6 +40,7 @@ public class ItemQRActivity extends Activity {
         mBinding = DataBindingUtil.setContentView(ItemQRActivity.this, R.layout.activity_item_qr);
 
         mQRPayload = getIntent().getStringExtra(QR_PAYLOAD);
+        Log.e(TAG,"QR Payload "+mQRPayload);
 
         generateQR();
     }
