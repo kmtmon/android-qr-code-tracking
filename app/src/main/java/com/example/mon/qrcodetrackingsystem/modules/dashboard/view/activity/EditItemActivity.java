@@ -80,13 +80,14 @@ public class EditItemActivity extends BaseActivity implements RecyclerViewAdapte
 
         mItemId = getIntent().getStringExtra(EditItemActivity.ITEM_ID);
 
-        ItemManager.getInstance().retrieveItem(mItemId, item -> {
-            mItem = item;
-            setUpItemInfo();
-        });
+        if(mItemId != null && !mItemId.isEmpty()){
+            ItemManager.getInstance().retrieveItem(mItemId, item -> {
+                mItem = item;
+                setUpItemInfo();
+            });
+        }
 
         setUpForm();
-
 
         //region Click
         RxUtils.clicks(mBinding.qr)
@@ -96,13 +97,13 @@ public class EditItemActivity extends BaseActivity implements RecyclerViewAdapte
 
         RxUtils.clicks(mBinding.product)
                 .subscribe(view -> {
-                    if (isEditing.get())
+                    if (isEditing.get() || isNewItem.get())
                         popUpProductDialog();
                 });
 
-        RxUtils.clicks(mBinding.status)
+        RxUtils.clicks(mBinding.status )
                 .subscribe(view -> {
-                    if (isEditing.get())
+                    if (isEditing.get() || isNewItem.get())
                         popUpStatusDialog();
                 });
 
@@ -169,19 +170,13 @@ public class EditItemActivity extends BaseActivity implements RecyclerViewAdapte
                 }
             });
 
-            ItemLogManager.getInstance().retrieveLatestItemLog(mItem.getId(), itemLog -> {
-                if (itemLog.status != null) {
-                    mBinding.status.setText(itemLog.status);
+            if (mItem.status != null) {
+                mBinding.status.setText(mItem.status);
 
-                    if (itemLog.timestamp != 0) {
-                        mBinding.updatedAt.setText("Last updated at " + Utils.getTimeStringFromTimeStamp(itemLog.timestamp));
-                    }
-                }
-
-                if (itemLog.status.equalsIgnoreCase(ItemStatusManager.IN_WAREHOUSE)) {
+                if (mItem.status.equalsIgnoreCase(ItemStatusManager.IN_WAREHOUSE)) {
                     isStatusInWareHouse.set(true);
-                    if(itemLog.remark != null && !itemLog.remark.isEmpty()) {
-                        String[] parts = itemLog.remark.split("-");
+                    if(mItem.remark != null && !mItem.remark.isEmpty()) {
+                        String[] parts = mItem.remark.split("-");
 
                         if (parts.length == 4){
                             String formatted_FloorLevel = parts[0].replace("FL","");
@@ -196,6 +191,13 @@ public class EditItemActivity extends BaseActivity implements RecyclerViewAdapte
                         }
                     }
                 }
+            }
+
+            ItemLogManager.getInstance().retrieveLatestItemLog(mItem.getId(), itemLog -> {
+                if (itemLog.timestamp != 0) {
+                    mBinding.updatedAt.setText("Last updated at " + Utils.getTimeStringFromTimeStamp(itemLog.timestamp));
+                }
+
             });
         }
     }
@@ -275,7 +277,17 @@ public class EditItemActivity extends BaseActivity implements RecyclerViewAdapte
             return;
         }
 
-        Item newItem = ItemManager.getInstance().createNewItem(mChosenProduct.getId());
+        String status = mBinding.status.getText().toString();
+        String mRemark = "";
+        if (status.equalsIgnoreCase(ItemStatusManager.IN_WAREHOUSE)) {
+            mRemark = "FL" + mBinding.floorlevel.getText().toString() + "-" +
+                    "RN" + mBinding.racknumber.getText().toString() + "-" +
+                    "RL" + mBinding.racklevel.getText().toString() + "-" +
+                    "RC" + mBinding.rackcolumn.getText().toString();
+        }
+
+
+        Item newItem = ItemManager.getInstance().createNewItem(mChosenProduct.getId(), status, mRemark);
 
         db.collection("item")
                 .add(newItem)
@@ -287,16 +299,15 @@ public class EditItemActivity extends BaseActivity implements RecyclerViewAdapte
                     String currentUserId = SharedPreferenceManager.getInstance(this).getCurrentUserId();
                     long unixTime = System.currentTimeMillis() / 1000L;
 
-                    String mRemark = "";
-                    if (mBinding.status.getText().toString().equalsIgnoreCase(ItemStatusManager.IN_WAREHOUSE)) {
-                        mRemark = "FL" + mBinding.floorlevel.getText().toString() + "-" +
+                    String remark = "";
+                    if (status.equalsIgnoreCase(ItemStatusManager.IN_WAREHOUSE)) {
+                        remark = "FL" + mBinding.floorlevel.getText().toString() + "-" +
                                 "RN" + mBinding.racknumber.getText().toString() + "-" +
                                 "RL" + mBinding.racklevel.getText().toString() + "-" +
                                 "RC" + mBinding.rackcolumn.getText().toString();
                     }
 
-
-                    ItemLog newItemLog = ItemLogManager.getInstance().createNewItemLog(newItemId, currentUserId, unixTime, mBinding.status.getText().toString(), mRemark);
+                    ItemLog newItemLog = ItemLogManager.getInstance().createNewItemLog(newItemId, currentUserId, unixTime, mBinding.status.getText().toString(), remark);
                     addItemLog(newItemLog);
 
                     isNewItem.set(false);
@@ -324,18 +335,41 @@ public class EditItemActivity extends BaseActivity implements RecyclerViewAdapte
 
         if (okayToSave()) {
 
-            String currentUserId = SharedPreferenceManager.getInstance(this).getCurrentUserId();
-            long unixTime = System.currentTimeMillis() / 1000L;
-
+            String status = mBinding.status.getText().toString();
             String mRemark = "";
-            if (mBinding.status.getText().toString().equalsIgnoreCase(ItemStatusManager.IN_WAREHOUSE)) {
+            if (status.equalsIgnoreCase(ItemStatusManager.IN_WAREHOUSE)) {
                 mRemark = "FL" + mBinding.floorlevel.getText().toString() + "-" +
                         "RN" + mBinding.racknumber.getText().toString() + "-" +
                         "RL" + mBinding.racklevel.getText().toString() + "-" +
                         "RC" + mBinding.rackcolumn.getText().toString();
             }
 
-            ItemLog newItemLog = ItemLogManager.getInstance().createNewItemLog(mItemId, currentUserId, unixTime, mBinding.status.getText().toString(), mRemark);
+            DocumentReference docRef = db.collection("item").document(mItemId);
+
+// Set the "isCapital" field of the city 'DC'
+            docRef
+                    .update(
+                            "status", status,
+                            "remark", mRemark
+                    )
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Log.d(TAG, "DocumentSnapshot successfully updated!");
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.w(TAG, "Error updating document", e);
+                        }
+                    });
+
+
+            String currentUserId = SharedPreferenceManager.getInstance(this).getCurrentUserId();
+            long unixTime = System.currentTimeMillis() / 1000L;
+
+            ItemLog newItemLog = ItemLogManager.getInstance().createNewItemLog(mItemId, currentUserId, unixTime, status, mRemark);
             addItemLog(newItemLog);
 
             isNewItem.set(false);

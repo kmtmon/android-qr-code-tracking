@@ -8,6 +8,9 @@ public class Item {
 
     public String id;
     public String productID;
+    public String status;
+    public String remark;
+
 
     public Item() {
     }
@@ -18,6 +21,14 @@ public class Item {
 
     public void setProductID(String productID) {
         this.productID = productID;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
     }
 
     public String getId() {

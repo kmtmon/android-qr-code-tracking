@@ -49,16 +49,14 @@ public class ItemListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             mViewHolder.mBinding.status.setText("");
             mViewHolder.mBinding.remark.setVisibility(View.GONE);
 
-            ItemLogManager.getInstance().retrieveLatestItemLog(mItem.getId(), itemLog -> {
-                if (itemLog.status != null) {
-                    mViewHolder.mBinding.status.setText("ID: "+itemLog.status);
-                }
+            if (mItem.status != null) {
+                mViewHolder.mBinding.status.setText("ID: "+mItem.status);
+            }
 
-                if (itemLog.remark != null && !itemLog.remark.isEmpty()) {
-                    mViewHolder.mBinding.remark.setVisibility(View.VISIBLE);
-                    mViewHolder.mBinding.remark.setText(itemLog.remark);
-                }
-            });
+            if (mItem.remark != null && !mItem.remark.isEmpty()) {
+                mViewHolder.mBinding.remark.setVisibility(View.VISIBLE);
+                mViewHolder.mBinding.remark.setText(mItem.remark);
+            }
         }
 
         RxUtils.clicks(mViewHolder.mBinding.getRoot())
