@@ -151,8 +151,8 @@
                             style="@style/EditTextAppearance.Black"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:focusableInTouchMode="@{view.isEditing}"
-                            android:focusable="@{view.isEditing}"/>
+                            android:focusableInTouchMode="@{view.isEditing || view.isNewItem}"
+                            android:focusable="@{view.isEditing || view.isNewItem}"/>
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -168,8 +168,8 @@
                             style="@style/EditTextAppearance.Black"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:focusableInTouchMode="@{view.isEditing}"
-                            android:focusable="@{view.isEditing}"/>
+                            android:focusableInTouchMode="@{view.isEditing || view.isNewItem}"
+                            android:focusable="@{view.isEditing || view.isNewItem}"/>
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -185,8 +185,8 @@
                             style="@style/EditTextAppearance.Black"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:focusableInTouchMode="@{view.isEditing}"
-                            android:focusable="@{view.isEditing}"/>
+                            android:focusableInTouchMode="@{view.isEditing || view.isNewItem}"
+                            android:focusable="@{view.isEditing || view.isNewItem}"/>
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -202,8 +202,8 @@
                             style="@style/EditTextAppearance.Black"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:focusableInTouchMode="@{view.isEditing}"
-                            android:focusable="@{view.isEditing}"
+                            android:focusableInTouchMode="@{view.isEditing || view.isNewItem}"
+                            android:focusable="@{view.isEditing || view.isNewItem}"
                             />
 
                     </LinearLayout>

@@ -50,7 +50,7 @@ public class ItemListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             mViewHolder.mBinding.remark.setVisibility(View.GONE);
 
             if (mItem.status != null) {
-                mViewHolder.mBinding.status.setText("ID: "+mItem.status);
+                mViewHolder.mBinding.status.setText(mItem.status);
             }
 
             if (mItem.remark != null && !mItem.remark.isEmpty()) {
