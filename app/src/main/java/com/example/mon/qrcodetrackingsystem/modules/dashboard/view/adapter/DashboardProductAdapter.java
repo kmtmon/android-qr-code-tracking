@@ -1,6 +1,7 @@
 package com.example.mon.qrcodetrackingsystem.modules.dashboard.view.adapter;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,6 +9,7 @@ import android.view.ViewGroup;
 import com.example.mon.qrcodetrackingsystem.databinding.ItemDashboardProductBinding;
 import com.example.mon.qrcodetrackingsystem.modules.dashboard.objectmodel.Product;
 import com.example.mon.qrcodetrackingsystem.utils.RxUtils;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -16,6 +18,8 @@ import java.util.List;
  */
 
 public class DashboardProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+
+    private String TAG = DashboardProductAdapter.class.getSimpleName();
 
     private List<Product> mProductList;
     private DashboardProductListener mListener;
@@ -42,6 +46,15 @@ public class DashboardProductAdapter extends RecyclerView.Adapter<RecyclerView.V
 
         DashBoardProductViewHolder productViewHolder = (DashBoardProductViewHolder)holder;
         productViewHolder.mBinding.title.setText(product.getName());
+
+        if(product.getImagePath() != null && !product.getImagePath().isEmpty()){
+
+            Picasso.get()
+                    .load(product.imagePath)
+                    .into(productViewHolder.mBinding.imageView);
+        }else{
+
+        }
 
         RxUtils.clicks(productViewHolder.mBinding.getRoot())
                 .subscribe(view -> {

@@ -23,6 +23,7 @@ import com.example.mon.qrcodetrackingsystem.modules.login.view.activity.LoginAct
 import com.example.mon.qrcodetrackingsystem.modules.scanner.SimpleScannerActivity;
 import com.example.mon.qrcodetrackingsystem.utils.RxUtils;
 import com.example.mon.qrcodetrackingsystem.utils.SharedPreferenceManager;
+import com.crashlytics.android.Crashlytics;
 
 import static android.Manifest.permission.CAMERA;
 
@@ -52,6 +53,10 @@ public class DashboardActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
 
         mBinding = DataBindingUtil.setContentView(DashboardActivity.this, R.layout.activity_dashboard);
+
+        Crashlytics.setUserName(SharedPreferenceManager.getInstance(this).getCurrentUserId());
+
+
 
         mRecyclerView = mBinding.recyclerView;
 

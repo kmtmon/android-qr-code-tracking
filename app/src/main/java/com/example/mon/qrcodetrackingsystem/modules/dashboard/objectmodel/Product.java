@@ -8,6 +8,7 @@ public class Product {
     public String id;
     public String name;
     public String desc;
+    public String imagePath;
 
     public Product() {
     }
@@ -28,12 +29,17 @@ public class Product {
         return desc;
     }
 
+    public String getImagePath() {
+        return imagePath;
+    }
+
     @Override
     public String toString() {
         return "Product{" +
                 "id='" + id + '\'' +
                 ", name='" + name + '\'' +
                 ", desc='" + desc + '\'' +
+                ", imagePath='" + imagePath + '\'' +
                 '}';
     }
 }
