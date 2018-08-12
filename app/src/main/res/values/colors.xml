@@ -10,4 +10,6 @@
     <color name="yellow">#E9D460</color>
     <color name="pale_black">#2C3E50</color>
     <color name="pure_black">#000000</color>
+
+    <color name="transparent_black">#90000000</color>
 </resources>

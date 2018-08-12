@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.databinding.ObservableBoolean;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
@@ -72,6 +73,13 @@ public class EditItemActivity extends BaseActivity implements RecyclerViewAdapte
     public ObservableBoolean isEditing = new ObservableBoolean(false);
     public ObservableBoolean isStatusInWareHouse = new ObservableBoolean(false);
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(mItem != null){
+            mBinding.loading.setVisibility(View.GONE);
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +90,7 @@ public class EditItemActivity extends BaseActivity implements RecyclerViewAdapte
         mItemId = getIntent().getStringExtra(EditItemActivity.ITEM_ID);
 
         if(mItemId != null && !mItemId.isEmpty()){
+            mBinding.loading.setVisibility(View.VISIBLE);
             ItemManager.getInstance().retrieveItem(mItemId, item -> {
                 mItem = item;
                 setUpItemInfo();
@@ -93,7 +102,16 @@ public class EditItemActivity extends BaseActivity implements RecyclerViewAdapte
         //region Click
         RxUtils.clicks(mBinding.qr)
                 .subscribe(view -> {
-                    generateQR();
+                    mBinding.loading.setVisibility(View.VISIBLE);
+
+                    final Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            generateQR();
+                        }
+                    }, 200);
+
                 });
 
         RxUtils.clicks(mBinding.product)
@@ -204,6 +222,8 @@ public class EditItemActivity extends BaseActivity implements RecyclerViewAdapte
                 }
 
             });
+
+            mBinding.loading.setVisibility(View.GONE);
         }
     }
 
@@ -220,6 +240,7 @@ public class EditItemActivity extends BaseActivity implements RecyclerViewAdapte
         String json = gson.toJson(map);
 
         ItemQRActivity.show(this,json);
+
     }
     //endregion
 
@@ -397,6 +418,29 @@ public class EditItemActivity extends BaseActivity implements RecyclerViewAdapte
     private boolean okayToSave() {
         if (mItem == null) {
             return false;
+        }
+
+        String status = mBinding.status.getText().toString();
+
+        if(status == null || status.isEmpty()){
+            return false;
+        }
+
+        if(mItem.status!=null){
+            if(mItem.status.equalsIgnoreCase(status)){
+
+                String mRemark = "";
+                if (status.equalsIgnoreCase(ItemStatusManager.IN_WAREHOUSE)) {
+                    mRemark = "FL" + mBinding.floorlevel.getText().toString() + "-" +
+                            "RN" + mBinding.racknumber.getText().toString() + "-" +
+                            "RL" + mBinding.racklevel.getText().toString() + "-" +
+                            "RC" + mBinding.rackcolumn.getText().toString();
+                }
+
+                if(mItem.remark.equalsIgnoreCase(mRemark)){
+                    return false;
+                }
+            }
         }
         return true;
     }

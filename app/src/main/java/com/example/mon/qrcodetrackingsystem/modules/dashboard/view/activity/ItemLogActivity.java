@@ -9,6 +9,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
 
 import com.example.mon.qrcodetrackingsystem.R;
 import com.example.mon.qrcodetrackingsystem.base.BaseActivity;
@@ -55,10 +56,12 @@ public class ItemLogActivity extends BaseActivity {
         //endregion
 
         if(mItemId != null){
+            mBinding.loading.setVisibility(View.VISIBLE);
             ItemLogManager.getInstance().retrieveItemLogs(mItemId, itemLogList -> {
                 logList.clear();
                 logList.addAll(itemLogList);
                 logAdapter.notifyDataSetChanged();
+                mBinding.loading.setVisibility(View.GONE);
             });
         }else{
             Log.e(TAG,"mItemId is null");

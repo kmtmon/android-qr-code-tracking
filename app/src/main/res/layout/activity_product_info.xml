@@ -66,76 +66,54 @@
 
         </android.support.design.widget.AppBarLayout>
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="match_parent">
+
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingLeft="20dp"
-                android:paddingRight="20dp"
-                android:paddingTop="20dp">
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Product"
-                    style="@style/TextAppearance.Tiny"
-                    android:textColor="@color/pale_black"/>
-
-                <!--Product-->
-                <EditText
-                    android:id="@+id/product"
-                    style="@style/EditTextAppearance.Black"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="none"
-                    android:clickable="false"
-                    android:cursorVisible="false"
-                    android:focusable="false"
-                    android:focusableInTouchMode="false"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:text="Description"
-                    style="@style/TextAppearance.Tiny"
-                    android:textColor="@color/pale_black"/>
-
-                <!--Description-->
-                <EditText
-                    android:id="@+id/description"
-                    style="@style/EditTextAppearance.Black"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="none"
-                    android:clickable="false"
-                    android:cursorVisible="false"
-                    android:focusable="false"
-                    android:focusableInTouchMode="false"
-                    />
                 <LinearLayout
-                    android:id="@+id/existingQtyLayout"
-                    android:visibility="gone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:paddingLeft="20dp"
+                    android:paddingRight="20dp"
+                    android:paddingTop="20dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Product"
+                        style="@style/TextAppearance.Tiny"
+                        android:textColor="@color/pale_black"/>
+
+                    <!--Product-->
+                    <EditText
+                        android:id="@+id/product"
+                        style="@style/EditTextAppearance.Black"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="none"
+                        android:clickable="false"
+                        android:cursorVisible="false"
+                        android:focusable="false"
+                        android:focusableInTouchMode="false"/>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
-                        android:text="Existing Quantity"
+                        android:text="Description"
                         style="@style/TextAppearance.Tiny"
                         android:textColor="@color/pale_black"/>
 
                     <!--Description-->
                     <EditText
-                        android:id="@+id/quantity"
+                        android:id="@+id/description"
                         style="@style/EditTextAppearance.Black"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -145,47 +123,83 @@
                         android:focusable="false"
                         android:focusableInTouchMode="false"
                         />
-
-                    <TextView
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:id="@+id/existingQtyLayout"
+                        android:visibility="gone"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Number of items left in the warehouse"
-                        style="@style/TextAppearance.Tiny"
-                        android:textColor="@color/dark_gray"
-                        />
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:text="Existing Quantity"
+                            style="@style/TextAppearance.Tiny"
+                            android:textColor="@color/pale_black"/>
+
+                        <!--Description-->
+                        <EditText
+                            android:id="@+id/quantity"
+                            style="@style/EditTextAppearance.Black"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="none"
+                            android:clickable="false"
+                            android:cursorVisible="false"
+                            android:focusable="false"
+                            android:focusableInTouchMode="false"
+                            />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Number of items left in the warehouse"
+                            style="@style/TextAppearance.Tiny"
+                            android:textColor="@color/dark_gray"
+                            />
+
+                    </LinearLayout>
 
                 </LinearLayout>
 
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:background="@color/light_gray"
+                    android:layout_marginTop="20dp"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        style="@style/TextAppearance.Regular"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+
+                        android:layout_marginLeft="20dp"
+                        android:text="Item Records"
+                        android:textColor="@color/pale_black"/>
+
+                </LinearLayout>
+
+                <!--Items List-->
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1">
+
+                </android.support.v7.widget.RecyclerView>
+
             </LinearLayout>
 
-            <LinearLayout
+            <include
+                android:visibility="gone"
+                android:id="@+id/loading"
                 android:layout_width="match_parent"
-                android:layout_height="30dp"
-                android:background="@color/light_gray"
-                android:layout_marginTop="20dp"
-                android:gravity="center_vertical">
+                android:layout_height="match_parent"
+                layout="@layout/loading" />
 
-                <TextView
-                    style="@style/TextAppearance.Regular"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-
-                    android:layout_marginLeft="20dp"
-                    android:text="Item Records"
-                    android:textColor="@color/pale_black"/>
-
-            </LinearLayout>
-
-            <!--Items List-->
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/recyclerView"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1">
-
-            </android.support.v7.widget.RecyclerView>
-
-        </LinearLayout>
+        </RelativeLayout>
 
     </LinearLayout>
 

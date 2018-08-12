@@ -75,6 +75,9 @@ public class ProductInfoActivity extends Activity implements ItemListAdapter.Ite
     @Override
     protected void onResume() {
         super.onResume();
+
+        mBinding.loading.setVisibility(View.VISIBLE);
+
         retrieveItemWithProductId();
         retrieveExistingQtyProductId();
     }
@@ -93,6 +96,7 @@ public class ProductInfoActivity extends Activity implements ItemListAdapter.Ite
 
     private void retrieveItemWithProductId(){
         ItemManager.getInstance().retrieveItems(mProductId, itemList -> {
+
             mItemList.clear();
             mItemList.addAll(itemList);
             itemListAdapter.notifyDataSetChanged();
@@ -115,6 +119,7 @@ public class ProductInfoActivity extends Activity implements ItemListAdapter.Ite
     }
 
     private void setUpProductInfo(){
+
         if (mProduct != null) {
 
             if(mProduct.getName() == null ||
@@ -129,6 +134,7 @@ public class ProductInfoActivity extends Activity implements ItemListAdapter.Ite
     }
 
     private void setUpExistingQty(int qty){
+        mBinding.loading.setVisibility(View.GONE);
         mBinding.existingQtyLayout.setVisibility(View.VISIBLE);
         mBinding.quantity.setText(""+qty);
 

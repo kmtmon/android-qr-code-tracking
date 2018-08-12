@@ -10,6 +10,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
 
 import com.example.mon.qrcodetrackingsystem.Manifest;
 import com.example.mon.qrcodetrackingsystem.R;
@@ -53,10 +54,9 @@ public class DashboardActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
 
         mBinding = DataBindingUtil.setContentView(DashboardActivity.this, R.layout.activity_dashboard);
+        mBinding.loading.setVisibility(View.VISIBLE);
 
         Crashlytics.setUserName(SharedPreferenceManager.getInstance(this).getCurrentUserId());
-
-
 
         mRecyclerView = mBinding.recyclerView;
 
@@ -97,6 +97,8 @@ public class DashboardActivity extends BaseActivity {
             this.mProductList.clear();
             this.mProductList.addAll(productList);
             productAdapter.notifyDataSetChanged();
+
+            mBinding.loading.setVisibility(View.GONE);
         });
         //endregion
 
