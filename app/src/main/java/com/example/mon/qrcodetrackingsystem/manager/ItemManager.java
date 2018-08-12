@@ -22,11 +22,12 @@ public class ItemManager {
         }
     }
 
-    public Item createNewItem(String productId, String status, String remark){
+    public Item createNewItem(String productId, String status, String remark, String description){
         Item newItem = new Item();
         newItem.setProductID(productId);
         newItem.setStatus(status);
         newItem.setRemark(remark);
+        newItem.setDescription(description);
         return  newItem;
     }
 

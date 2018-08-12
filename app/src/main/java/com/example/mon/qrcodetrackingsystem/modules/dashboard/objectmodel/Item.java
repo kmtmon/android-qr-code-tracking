@@ -10,6 +10,7 @@ public class Item {
     public String productID;
     public String status;
     public String remark;
+    public String description;
 
 
     public Item() {
@@ -31,6 +32,10 @@ public class Item {
         this.remark = remark;
     }
 
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public String getId() {
         return id;
     }
@@ -39,5 +44,7 @@ public class Item {
         return productID;
     }
 
-
+    public String getDescription() {
+        return description;
+    }
 }

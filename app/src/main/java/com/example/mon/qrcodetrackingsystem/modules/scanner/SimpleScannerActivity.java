@@ -11,6 +11,9 @@ import com.example.mon.qrcodetrackingsystem.modules.dashboard.view.activity.Edit
 import com.google.gson.Gson;
 import com.google.zxing.Result;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
 public class SimpleScannerActivity extends Activity implements ZXingScannerView.ResultHandler {
@@ -50,11 +53,15 @@ public class SimpleScannerActivity extends Activity implements ZXingScannerView.
         // Do something with the result here
         Log.d(TAG, "Raw Text "+rawResult.getText()); // Prints scan results
         try{
+
+            Map<String,Object> map = new HashMap<>();
+
             Gson gson = new Gson();
-            Item item = gson.fromJson(rawResult.getText(),Item.class);
-            if(item.getId() != null){
+            map = (Map<String,Object>) gson.fromJson(rawResult.getText(), map.getClass());
+
+            if(map.get("id") != null && !map.get("id").toString().isEmpty()){
                 finish();
-                EditItemActivity.show(this,item.getId());
+                EditItemActivity.show(this,map.get("id").toString());
             }
 
         }catch(Exception e){

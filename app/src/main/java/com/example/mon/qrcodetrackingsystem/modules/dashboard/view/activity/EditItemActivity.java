@@ -34,6 +34,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class EditItemActivity extends BaseActivity implements RecyclerViewAdapter.RecyclerViewAdapterListener {
@@ -193,6 +194,10 @@ public class EditItemActivity extends BaseActivity implements RecyclerViewAdapte
                 }
             }
 
+            if (mItem.getDescription() != null && ! mItem.getDescription().isEmpty()){
+                mBinding.description.setText(mItem.getDescription());
+            }
+
             ItemLogManager.getInstance().retrieveLatestItemLog(mItem.getId(), itemLog -> {
                 if (itemLog.timestamp != 0) {
                     mBinding.updatedAt.setText("Last updated at " + Utils.getTimeStringFromTimeStamp(itemLog.timestamp));
@@ -208,8 +213,11 @@ public class EditItemActivity extends BaseActivity implements RecyclerViewAdapte
         if(mItem == null){
             return;
         }
+        HashMap<String, String> map= new HashMap<>();
+        map.put("id",mItem.id);
+
         Gson gson = new Gson();
-        String json = gson.toJson(mItem);
+        String json = gson.toJson(map);
 
         ItemQRActivity.show(this,json);
     }
@@ -285,9 +293,11 @@ public class EditItemActivity extends BaseActivity implements RecyclerViewAdapte
                     "RL" + mBinding.racklevel.getText().toString() + "-" +
                     "RC" + mBinding.rackcolumn.getText().toString();
         }
+        String mDescription = "";
+        mDescription = mBinding.description.getText().toString();
 
 
-        Item newItem = ItemManager.getInstance().createNewItem(mChosenProduct.getId(), status, mRemark);
+        Item newItem = ItemManager.getInstance().createNewItem(mChosenProduct.getId(), status, mRemark, mDescription);
 
         db.collection("item")
                 .add(newItem)
@@ -343,14 +353,15 @@ public class EditItemActivity extends BaseActivity implements RecyclerViewAdapte
                         "RL" + mBinding.racklevel.getText().toString() + "-" +
                         "RC" + mBinding.rackcolumn.getText().toString();
             }
+            String mDescription = "";
+            mDescription = mBinding.description.getText().toString();
 
             DocumentReference docRef = db.collection("item").document(mItemId);
 
-// Set the "isCapital" field of the city 'DC'
             docRef
                     .update(
                             "status", status,
-                            "remark", mRemark
+                            "remark", mRemark, "description", mDescription
                     )
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
