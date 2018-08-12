@@ -60,4 +60,9 @@
         <item name="android:textSize">11sp</item>
         <item name="android:textColor">@color/pure_white</item>
     </style>
+
+    <style name="TextAppearance.SuperTiny">
+        <item name="android:textSize">9sp</item>
+        <item name="android:textColor">@color/pure_white</item>
+    </style>
 </resources>

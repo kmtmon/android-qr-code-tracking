@@ -1,10 +1,12 @@
 package com.example.mon.qrcodetrackingsystem.manager;
 
 import com.example.mon.qrcodetrackingsystem.modules.dashboard.objectmodel.Item;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,11 +78,45 @@ public class ItemManager {
         });
     }
 
+    public void retrieveExistingQty(String productId, IemExistingQtyOnCompletionListener mListener) {
+
+        List<Item> itemList = new ArrayList<Item>();
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        Query docRef = db.collection("item").whereEqualTo("productID",productId);
+
+        docRef.get().addOnCompleteListener((Task<QuerySnapshot> task) -> {
+
+            if (task.isSuccessful()) {
+
+                if(!task.getResult().isEmpty()){
+
+                    for(DocumentSnapshot document : task.getResult().getDocuments()){
+                        Item item=document.toObject(Item.class);
+                        item.setId(document.getId());
+                        if(item.status != null && !item.status.isEmpty()){
+                            if(item.status.equalsIgnoreCase(ItemStatusManager.IN_WAREHOUSE)){
+                                itemList.add(item);
+                            }
+                        }
+                    }
+                }
+            }
+
+            mListener.IemExistingQtyOnCompletionListener(itemList.size());
+        });
+    }
+
     public interface ItemOnCompletionListener {
         void ItemOnCompletionListener(Item item);
     }
 
     public interface OnCompletionListener {
         void OnCompletionListener(List<Item> itemList);
+    }
+
+    public interface IemExistingQtyOnCompletionListener {
+        void IemExistingQtyOnCompletionListener(int qty);
     }
 }

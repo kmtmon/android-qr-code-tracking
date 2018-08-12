@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
 
 import com.example.mon.qrcodetrackingsystem.R;
 import com.example.mon.qrcodetrackingsystem.databinding.ActivityProductInfoBinding;
@@ -75,6 +76,7 @@ public class ProductInfoActivity extends Activity implements ItemListAdapter.Ite
     protected void onResume() {
         super.onResume();
         retrieveItemWithProductId();
+        retrieveExistingQtyProductId();
     }
 
     //region Firebase
@@ -83,6 +85,10 @@ public class ProductInfoActivity extends Activity implements ItemListAdapter.Ite
             mProduct=product;
             setUpProductInfo();
         });
+
+        ItemManager.getInstance().retrieveExistingQty(mProductId, existingQty -> {
+            setUpExistingQty(existingQty);
+        });
     }
 
     private void retrieveItemWithProductId(){
@@ -90,6 +96,12 @@ public class ProductInfoActivity extends Activity implements ItemListAdapter.Ite
             mItemList.clear();
             mItemList.addAll(itemList);
             itemListAdapter.notifyDataSetChanged();
+        });
+    }
+
+    private void retrieveExistingQtyProductId(){
+        ItemManager.getInstance().retrieveExistingQty(mProductId, existingQty -> {
+            setUpExistingQty(existingQty);
         });
     }
     //endregion
@@ -114,6 +126,12 @@ public class ProductInfoActivity extends Activity implements ItemListAdapter.Ite
             mBinding.product.setText(mProduct.getName());
             mBinding.description.setText(mProduct.getDesc());
         }
+    }
+
+    private void setUpExistingQty(int qty){
+        mBinding.existingQtyLayout.setVisibility(View.VISIBLE);
+        mBinding.quantity.setText(""+qty);
+
     }
 
     @Override
