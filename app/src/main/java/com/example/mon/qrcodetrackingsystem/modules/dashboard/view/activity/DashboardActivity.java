@@ -11,6 +11,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import com.example.mon.qrcodetrackingsystem.Manifest;
 import com.example.mon.qrcodetrackingsystem.R;
@@ -25,6 +26,7 @@ import com.example.mon.qrcodetrackingsystem.modules.scanner.SimpleScannerActivit
 import com.example.mon.qrcodetrackingsystem.utils.RxUtils;
 import com.example.mon.qrcodetrackingsystem.utils.SharedPreferenceManager;
 import com.crashlytics.android.Crashlytics;
+import com.yarolegovich.lovelydialog.LovelyStandardDialog;
 
 import static android.Manifest.permission.CAMERA;
 
@@ -72,9 +74,22 @@ public class DashboardActivity extends BaseActivity {
 
         RxUtils.clicks(mBinding.logout)
                 .subscribe(view ->{
-                    SharedPreferenceManager.getInstance(this).removeCurrentUserId();
-                    LoginActivity.show(this);
-                    finish();
+
+
+                    new LovelyStandardDialog(this, LovelyStandardDialog.ButtonLayout.VERTICAL)
+                            .setButtonsColorRes(R.color.red)
+                            .setMessage("Are you sure you want to log out?")
+                            .setTopTitleColor(R.color.pure_white)
+                            .setPositiveButton("Log Out", new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    SharedPreferenceManager.getInstance(DashboardActivity.this).removeCurrentUserId();
+                                    LoginActivity.show(DashboardActivity.this);
+                                    finish();
+                                }
+                            })
+                            .show();
+
                 });
 
         RxUtils.clicks(mBinding.scanner)
