@@ -2,6 +2,8 @@ package com.example.mon.qrcodetrackingsystem.modules.login.view.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -50,6 +52,14 @@ public class LoginActivity extends BaseActivity {
                     loginAction();
                 });
         //endregion
+
+        try {
+            PackageInfo pInfo = this.getPackageManager().getPackageInfo(getPackageName(), 0);
+            String version = pInfo.versionName;
+            mBinding.version.setText(version);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     private void loginAction() {
