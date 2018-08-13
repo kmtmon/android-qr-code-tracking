@@ -33,6 +33,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.gson.Gson;
+import com.yarolegovich.lovelydialog.LovelyStandardDialog;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -133,12 +134,35 @@ public class EditItemActivity extends BaseActivity implements RecyclerViewAdapte
 
         RxUtils.clicks(mBinding.add)
                 .subscribe(view -> {
-                    addItem();
+
+                    new LovelyStandardDialog(this, LovelyStandardDialog.ButtonLayout.VERTICAL)
+                            .setButtonsColorRes(R.color.colorPrimary)
+                            .setMessage("Are you sure you want to add the item?")
+                            .setTopTitleColor(R.color.pure_white)
+                            .setPositiveButton("Yes", new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    addItem();
+                                }
+                            })
+                            .show();
                 });
 
         RxUtils.clicks(mBinding.save)
                 .subscribe(view -> {
-                    saveItem();
+
+                    new LovelyStandardDialog(this, LovelyStandardDialog.ButtonLayout.VERTICAL)
+                            .setButtonsColorRes(R.color.colorPrimary)
+                            .setMessage("Are you sure you want to save the item?")
+                            .setTopTitleColor(R.color.pure_white)
+                            .setPositiveButton("Yes", new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    saveItem();
+                                }
+                            })
+                            .show();
+
                 });
 
         RxUtils.clicks(mBinding.cancel)
@@ -344,6 +368,10 @@ public class EditItemActivity extends BaseActivity implements RecyclerViewAdapte
                     isNewItem.set(false);
                     isDisplayingInfo.set(true);
                     isEditing.set(false);
+
+                    /** Set newly added item to mItem */
+                    newItem.setId(newItemId);
+                    mItem = newItem;
                 })
                 .addOnFailureListener(e -> Log.w(TAG, "Error adding document", e));
 
