@@ -56,7 +56,7 @@ public class LoginActivity extends BaseActivity {
         try {
             PackageInfo pInfo = this.getPackageManager().getPackageInfo(getPackageName(), 0);
             String version = pInfo.versionName;
-            mBinding.version.setText(version);
+            mBinding.version.setText("Version: "+version);
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
