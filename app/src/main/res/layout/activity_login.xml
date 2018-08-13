@@ -60,6 +60,13 @@
             android:text="xxx"
             android:textColor="@color/pale_white"/>
 
+        <include
+            android:visibility="gone"
+            android:id="@+id/loading"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            layout="@layout/loading"/>
+
     </RelativeLayout>
 
 </layout>

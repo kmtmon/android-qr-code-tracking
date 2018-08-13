@@ -8,6 +8,7 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import com.example.mon.qrcodetrackingsystem.R;
@@ -76,6 +77,7 @@ public class LoginActivity extends BaseActivity {
             return;
         }
 
+        mBinding.loading.setVisibility(View.VISIBLE);
         //region Firebase login integration
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -83,6 +85,8 @@ public class LoginActivity extends BaseActivity {
         Query docRef = db.collection("user").whereEqualTo("email",email);
 
         docRef.get().addOnCompleteListener(task -> {
+
+            mBinding.loading.setVisibility(View.GONE);
             if (task.isSuccessful()) {
 
                 if(!task.getResult().isEmpty()){
