@@ -13,11 +13,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
-import com.example.mon.qrcodetrackingsystem.Manifest;
 import com.example.mon.qrcodetrackingsystem.R;
 import com.example.mon.qrcodetrackingsystem.base.BaseActivity;
 import com.example.mon.qrcodetrackingsystem.databinding.ActivityDashboardBinding;
-import com.example.mon.qrcodetrackingsystem.manager.ItemLogManager;
 import com.example.mon.qrcodetrackingsystem.manager.ProductManager;
 import com.example.mon.qrcodetrackingsystem.modules.dashboard.objectmodel.Product;
 import com.example.mon.qrcodetrackingsystem.modules.dashboard.view.adapter.DashboardProductAdapter;
@@ -32,6 +30,8 @@ import static android.Manifest.permission.CAMERA;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import io.fabric.sdk.android.Fabric;
 
 public class DashboardActivity extends BaseActivity {
 
@@ -67,6 +67,17 @@ public class DashboardActivity extends BaseActivity {
         //endregion
 
         //region Click
+        RxUtils.clicks(mBinding.delivery)
+                .subscribe(view -> {
+                    if(ContextCompat.checkSelfPermission(getApplicationContext(), CAMERA) == PackageManager.PERMISSION_GRANTED){
+                        SimpleScannerActivity.show(this, true, false);
+                    }else{
+                        ActivityCompat.requestPermissions(this,
+                                new String[]{CAMERA},
+                                1);
+                    }
+                });
+
         RxUtils.clicks(mBinding.add)
                 .subscribe(view -> {
                     EditItemActivity.show(this);
@@ -74,8 +85,6 @@ public class DashboardActivity extends BaseActivity {
 
         RxUtils.clicks(mBinding.logout)
                 .subscribe(view ->{
-
-
                     new LovelyStandardDialog(this, LovelyStandardDialog.ButtonLayout.VERTICAL)
                             .setButtonsColorRes(R.color.red)
                             .setMessage("Are you sure you want to log out?")
@@ -89,13 +98,12 @@ public class DashboardActivity extends BaseActivity {
                                 }
                             })
                             .show();
-
                 });
 
         RxUtils.clicks(mBinding.scanner)
                 .subscribe(view ->{
                     if(ContextCompat.checkSelfPermission(getApplicationContext(), CAMERA) == PackageManager.PERMISSION_GRANTED){
-                        SimpleScannerActivity.show(this);
+                        SimpleScannerActivity.show(this, false, false);
                     }else{
                         ActivityCompat.requestPermissions(this,
                                 new String[]{CAMERA},

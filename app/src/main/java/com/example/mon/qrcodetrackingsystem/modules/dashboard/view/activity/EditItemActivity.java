@@ -56,7 +56,7 @@ public class EditItemActivity extends BaseActivity implements RecyclerViewAdapte
     }
     //endregion
 
-    public static String ITEM_ID = "ITEM_ID";
+    public final static String ITEM_ID = "ITEM_ID";
     private String TAG = EditItemActivity.class.getSimpleName();
 
     ActivityEditItemBinding mBinding;
@@ -77,7 +77,7 @@ public class EditItemActivity extends BaseActivity implements RecyclerViewAdapte
     @Override
     protected void onResume() {
         super.onResume();
-        if(mItem != null){
+        if (mItem != null) {
             mBinding.loading.setVisibility(View.GONE);
         }
     }
@@ -90,7 +90,7 @@ public class EditItemActivity extends BaseActivity implements RecyclerViewAdapte
 
         mItemId = getIntent().getStringExtra(EditItemActivity.ITEM_ID);
 
-        if(mItemId != null && !mItemId.isEmpty()){
+        if (mItemId != null && !mItemId.isEmpty()) {
             mBinding.loading.setVisibility(View.VISIBLE);
             ItemManager.getInstance().retrieveItem(mItemId, item -> {
                 mItem = item;
@@ -121,16 +121,14 @@ public class EditItemActivity extends BaseActivity implements RecyclerViewAdapte
                         popUpProductDialog();
                 });
 
-        RxUtils.clicks(mBinding.status )
+        RxUtils.clicks(mBinding.status)
                 .subscribe(view -> {
                     if (isEditing.get() || isNewItem.get())
                         popUpStatusDialog();
                 });
 
         RxUtils.clicks(mBinding.log)
-                .subscribe(view -> {
-                    ItemLogActivity.show(this, mItemId);
-                });
+                .subscribe(view -> ItemLogActivity.show(this, mItemId));
 
         RxUtils.clicks(mBinding.add)
                 .subscribe(view -> {
@@ -218,14 +216,14 @@ public class EditItemActivity extends BaseActivity implements RecyclerViewAdapte
 
                 if (mItem.status.equalsIgnoreCase(ItemStatusManager.IN_WAREHOUSE)) {
                     isStatusInWareHouse.set(true);
-                    if(mItem.remark != null && !mItem.remark.isEmpty()) {
+                    if (mItem.remark != null && !mItem.remark.isEmpty()) {
                         String[] parts = mItem.remark.split("-");
 
-                        if (parts.length == 4){
-                            String formatted_FloorLevel = parts[0].replace("FL","");
-                            String formatted_RackNumber = parts[1].replace("RN","");
-                            String formatted_RackLevel = parts[2].replace("RL","");
-                            String formatted_RackColumn = parts[3].replace("RC","");
+                        if (parts.length == 4) {
+                            String formatted_FloorLevel = parts[0].replace("FL", "");
+                            String formatted_RackNumber = parts[1].replace("RN", "");
+                            String formatted_RackLevel = parts[2].replace("RL", "");
+                            String formatted_RackColumn = parts[3].replace("RC", "");
 
                             mBinding.floorlevel.setText(formatted_FloorLevel);
                             mBinding.racknumber.setText(formatted_RackNumber);
@@ -236,7 +234,7 @@ public class EditItemActivity extends BaseActivity implements RecyclerViewAdapte
                 }
             }
 
-            if (mItem.getDescription() != null && ! mItem.getDescription().isEmpty()){
+            if (mItem.getDescription() != null && !mItem.getDescription().isEmpty()) {
                 mBinding.description.setText(mItem.getDescription());
             }
 
@@ -252,18 +250,18 @@ public class EditItemActivity extends BaseActivity implements RecyclerViewAdapte
     }
 
     //region QR
-    private void generateQR(){
+    private void generateQR() {
 
-        if(mItem == null){
+        if (mItem == null) {
             return;
         }
-        HashMap<String, String> map= new HashMap<>();
-        map.put("id",mItem.id);
+        HashMap<String, String> map = new HashMap<>();
+        map.put("id", mItem.id);
 
         Gson gson = new Gson();
         String json = gson.toJson(map);
 
-        ItemQRActivity.show(this,json);
+        ItemQRActivity.show(this, json);
 
     }
     //endregion
@@ -338,11 +336,11 @@ public class EditItemActivity extends BaseActivity implements RecyclerViewAdapte
                     "RL" + mBinding.racklevel.getText().toString() + "-" +
                     "RC" + mBinding.rackcolumn.getText().toString();
         }
-        String mDescription = "";
-        mDescription = mBinding.description.getText().toString();
 
+        String mDescription = mBinding.description.getText().toString();
 
-        Item newItem = ItemManager.getInstance().createNewItem(mChosenProduct.getId(), status, mRemark, mDescription);
+        Item newItem = ItemManager.getInstance().createNewItem(mChosenProduct.getId(), status, mRemark, mDescription, 0, 0);
+//        Item newItem = ItemManager.getInstance().createNewItem(mChosenProduct.getId(), status, mRemark, mDescription, mLat, mLng);
 
         db.collection("item")
                 .add(newItem)
@@ -402,8 +400,8 @@ public class EditItemActivity extends BaseActivity implements RecyclerViewAdapte
                         "RL" + mBinding.racklevel.getText().toString() + "-" +
                         "RC" + mBinding.rackcolumn.getText().toString();
             }
-            String mDescription = "";
-            mDescription = mBinding.description.getText().toString();
+
+            String mDescription = mBinding.description.getText().toString();
 
             DocumentReference docRef = db.collection("item").document(mItemId);
 
@@ -412,18 +410,8 @@ public class EditItemActivity extends BaseActivity implements RecyclerViewAdapte
                             "status", status,
                             "remark", mRemark, "description", mDescription
                     )
-                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-                            Log.d(TAG, "DocumentSnapshot successfully updated!");
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Log.w(TAG, "Error updating document", e);
-                        }
-                    });
+                    .addOnSuccessListener(aVoid -> Log.d(TAG, "DocumentSnapshot successfully updated!"))
+                    .addOnFailureListener(e -> Log.w(TAG, "Error updating document", e));
 
 
             String currentUserId = SharedPreferenceManager.getInstance(this).getCurrentUserId();
@@ -450,12 +438,12 @@ public class EditItemActivity extends BaseActivity implements RecyclerViewAdapte
 
         String status = mBinding.status.getText().toString();
 
-        if(status == null || status.isEmpty()){
+        if (status == null || status.isEmpty()) {
             return false;
         }
 
-        if(mItem.status!=null){
-            if(mItem.status.equalsIgnoreCase(status)){
+        if (mItem.status != null) {
+            if (mItem.status.equalsIgnoreCase(status)) {
 
                 String mRemark = "";
                 if (status.equalsIgnoreCase(ItemStatusManager.IN_WAREHOUSE)) {
@@ -465,12 +453,13 @@ public class EditItemActivity extends BaseActivity implements RecyclerViewAdapte
                             "RC" + mBinding.rackcolumn.getText().toString();
                 }
 
-                if(mItem.remark!= null && mItem.remark.equalsIgnoreCase(mRemark)){
+                if (mItem.remark != null && mItem.remark.equalsIgnoreCase(mRemark)) {
 
                     String description = mBinding.description.getText().toString();
-                    if(mItem.description != null && mItem.description.equalsIgnoreCase(description)){
+                    if (mItem.description != null && mItem.description.equalsIgnoreCase(description)) {
                         return false;
                     }
+
                 }
             }
         }

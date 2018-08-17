@@ -1,6 +1,11 @@
 package com.example.mon.qrcodetrackingsystem.manager;
 
+import android.support.annotation.NonNull;
+import android.util.Log;
+
 import com.example.mon.qrcodetrackingsystem.modules.dashboard.objectmodel.Item;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -24,12 +29,14 @@ public class ItemManager {
         }
     }
 
-    public Item createNewItem(String productId, String status, String remark, String description){
+    public Item createNewItem(String productId, String status, String remark, String description, double lat, double lng){
         Item newItem = new Item();
         newItem.setProductID(productId);
         newItem.setStatus(status);
         newItem.setRemark(remark);
         newItem.setDescription(description);
+        newItem.setLat(lat);
+        newItem.setLng(lng);
         return  newItem;
     }
 
@@ -105,6 +112,21 @@ public class ItemManager {
             }
 
             mListener.IemExistingQtyOnCompletionListener(itemList.size());
+        });
+    }
+
+    public void updateItemDeliveryStatus(String itemId, String status) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        DocumentReference docRef = db.collection("item").document(itemId);
+
+        docRef.update(
+                "status", status,
+                "remark", ""
+        ).addOnCompleteListener( task -> {
+            if (!task.isSuccessful()) {
+               //error
+            }
         });
     }
 

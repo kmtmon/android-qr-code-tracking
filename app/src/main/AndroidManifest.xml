@@ -3,6 +3,9 @@
     package="com.example.mon.qrcodetrackingsystem">
 
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
         android:allowBackup="true"
@@ -25,11 +28,22 @@
         <activity android:name=".modules.dashboard.view.activity.ItemLogActivity" />
         <activity android:name=".modules.dashboard.view.activity.ProductInfoActivity" />
         <activity android:name=".modules.dashboard.view.activity.ItemQRActivity" />
-        <activity android:name=".modules.scanner.SimpleScannerActivity"></activity>
+        <activity android:name=".modules.scanner.SimpleScannerActivity" />
+        <activity android:name=".modules.dashboard.view.activity.DeliveryListActivity" />
+        <activity android:name=".modules.dashboard.view.activity.MapActivity" />
+
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="0051d03c13817b03716fed8a4ac9205fedbad601" />
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyAvBsh0llOOY6eD9TJ0jhF8iXQa3gLcwt0" />
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
+        <activity android:name=".modules.dashboard.view.activity.OnDeliveryListActivity" />
+        <activity android:name=".modules.dashboard.view.activity.ConfirmDeliveryActivity"></activity>
     </application>
 
-    <uses-permission android:name="android.permission.INTERNET" />
 </manifest>
