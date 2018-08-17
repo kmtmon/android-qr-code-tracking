@@ -206,6 +206,42 @@
                             android:focusable="@{view.isEditing || view.isNewItem}"
                             />
 
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:text="Latitude"
+                            style="@style/TextAppearance.Tiny"
+                            android:textColor="@color/pale_black"/>
+
+                        <!--Rack Column -->
+                        <EditText
+                            android:id="@+id/lat"
+                            style="@style/EditTextAppearance.Black"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:focusableInTouchMode="@{view.isEditing || view.isNewItem}"
+                            android:focusable="@{view.isEditing || view.isNewItem}"
+                            />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:text="Longitude"
+                            style="@style/TextAppearance.Tiny"
+                            android:textColor="@color/pale_black"/>
+
+                        <!--Rack Column -->
+                        <EditText
+                            android:id="@+id/lng"
+                            style="@style/EditTextAppearance.Black"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:focusableInTouchMode="@{view.isEditing || view.isNewItem}"
+                            android:focusable="@{view.isEditing || view.isNewItem}"
+                            />
+
                     </LinearLayout>
 
                     <!--Updated Label-->

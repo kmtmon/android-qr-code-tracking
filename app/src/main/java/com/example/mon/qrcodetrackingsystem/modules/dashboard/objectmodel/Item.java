@@ -10,6 +10,9 @@ public class Item {
     public String productID;
     public String status;
     public String remark;
+    public String description;
+    public double lat;
+    public double lng;
 
 
     public Item() {
@@ -31,6 +34,10 @@ public class Item {
         this.remark = remark;
     }
 
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public String getId() {
         return id;
     }
@@ -39,5 +46,23 @@ public class Item {
         return productID;
     }
 
+    public String getDescription() {
+        return description;
+    }
 
+    public double getLat() {
+        return lat;
+    }
+
+    public void setLat(double lat) {
+        this.lat = lat;
+    }
+
+    public double getLng() {
+        return lng;
+    }
+
+    public void setLng(double lng) {
+        this.lng = lng;
+    }
 }

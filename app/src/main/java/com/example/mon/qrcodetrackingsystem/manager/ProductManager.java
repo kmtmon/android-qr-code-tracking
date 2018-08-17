@@ -25,7 +25,7 @@ public class ProductManager {
         }
     }
 
-    public void retrieveProduct(String productId, ProductOnCompletionListener mListner) {
+    public void retrieveProduct(String productId, ProductOnCompletionListener mListener) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         DocumentReference docRef = db.collection("product").document(productId);
@@ -36,8 +36,9 @@ public class ProductManager {
                 if(task.getResult() != null){
 
                     Product product=task.getResult().toObject(Product.class);
+                    product.setId(productId);
 
-                    mListner.ProductOnCompletionListener(product);
+                    mListener.ProductOnCompletionListener(product);
                 }
             }
         });

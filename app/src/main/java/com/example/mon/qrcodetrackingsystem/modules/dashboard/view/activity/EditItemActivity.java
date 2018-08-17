@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.databinding.ObservableBoolean;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
@@ -32,8 +33,10 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.gson.Gson;
+import com.yarolegovich.lovelydialog.LovelyStandardDialog;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class EditItemActivity extends BaseActivity implements RecyclerViewAdapter.RecyclerViewAdapterListener {
@@ -53,7 +56,7 @@ public class EditItemActivity extends BaseActivity implements RecyclerViewAdapte
     }
     //endregion
 
-    public static String ITEM_ID = "ITEM_ID";
+    public final static String ITEM_ID = "ITEM_ID";
     private String TAG = EditItemActivity.class.getSimpleName();
 
     ActivityEditItemBinding mBinding;
@@ -71,6 +74,13 @@ public class EditItemActivity extends BaseActivity implements RecyclerViewAdapte
     public ObservableBoolean isEditing = new ObservableBoolean(false);
     public ObservableBoolean isStatusInWareHouse = new ObservableBoolean(false);
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(mItem != null){
+            mBinding.loading.setVisibility(View.GONE);
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,6 +91,7 @@ public class EditItemActivity extends BaseActivity implements RecyclerViewAdapte
         mItemId = getIntent().getStringExtra(EditItemActivity.ITEM_ID);
 
         if(mItemId != null && !mItemId.isEmpty()){
+            mBinding.loading.setVisibility(View.VISIBLE);
             ItemManager.getInstance().retrieveItem(mItemId, item -> {
                 mItem = item;
                 setUpItemInfo();
@@ -92,7 +103,11 @@ public class EditItemActivity extends BaseActivity implements RecyclerViewAdapte
         //region Click
         RxUtils.clicks(mBinding.qr)
                 .subscribe(view -> {
-                    generateQR();
+                    mBinding.loading.setVisibility(View.VISIBLE);
+
+                    final Handler handler = new Handler();
+                    handler.postDelayed(() -> generateQR(), 200);
+
                 });
 
         RxUtils.clicks(mBinding.product)
@@ -108,19 +123,33 @@ public class EditItemActivity extends BaseActivity implements RecyclerViewAdapte
                 });
 
         RxUtils.clicks(mBinding.log)
-                .subscribe(view -> {
-                    ItemLogActivity.show(this, mItemId);
-                });
+                .subscribe(view -> ItemLogActivity.show(this, mItemId));
 
         RxUtils.clicks(mBinding.add)
-                .subscribe(view -> {
-                    addItem();
-                });
+                .subscribe(view -> new LovelyStandardDialog(this, LovelyStandardDialog.ButtonLayout.VERTICAL)
+                        .setButtonsColorRes(R.color.colorPrimary)
+                        .setMessage("Are you sure you want to add the item?")
+                        .setTopTitleColor(R.color.pure_white)
+                        .setPositiveButton("Yes", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                addItem();
+                            }
+                        })
+                        .show());
 
         RxUtils.clicks(mBinding.save)
-                .subscribe(view -> {
-                    saveItem();
-                });
+                .subscribe(view -> new LovelyStandardDialog(this, LovelyStandardDialog.ButtonLayout.VERTICAL)
+                        .setButtonsColorRes(R.color.colorPrimary)
+                        .setMessage("Are you sure you want to save the item?")
+                        .setTopTitleColor(R.color.pure_white)
+                        .setPositiveButton("Yes", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                saveItem();
+                            }
+                        })
+                        .show());
 
         RxUtils.clicks(mBinding.cancel)
                 .subscribe(view -> {
@@ -193,12 +222,18 @@ public class EditItemActivity extends BaseActivity implements RecyclerViewAdapte
                 }
             }
 
+            if (mItem.getDescription() != null && ! mItem.getDescription().isEmpty()){
+                mBinding.description.setText(mItem.getDescription());
+            }
+
             ItemLogManager.getInstance().retrieveLatestItemLog(mItem.getId(), itemLog -> {
                 if (itemLog.timestamp != 0) {
                     mBinding.updatedAt.setText("Last updated at " + Utils.getTimeStringFromTimeStamp(itemLog.timestamp));
                 }
 
             });
+
+            mBinding.loading.setVisibility(View.GONE);
         }
     }
 
@@ -208,10 +243,14 @@ public class EditItemActivity extends BaseActivity implements RecyclerViewAdapte
         if(mItem == null){
             return;
         }
+        HashMap<String, String> map= new HashMap<>();
+        map.put("id",mItem.id);
+
         Gson gson = new Gson();
-        String json = gson.toJson(mItem);
+        String json = gson.toJson(map);
 
         ItemQRActivity.show(this,json);
+
     }
     //endregion
 
@@ -285,9 +324,10 @@ public class EditItemActivity extends BaseActivity implements RecyclerViewAdapte
                     "RL" + mBinding.racklevel.getText().toString() + "-" +
                     "RC" + mBinding.rackcolumn.getText().toString();
         }
+        String mDescription = mBinding.description.getText().toString();
 
-
-        Item newItem = ItemManager.getInstance().createNewItem(mChosenProduct.getId(), status, mRemark);
+        Item newItem = ItemManager.getInstance().createNewItem(mChosenProduct.getId(), status, mRemark, mDescription, 0, 0);
+//        Item newItem = ItemManager.getInstance().createNewItem(mChosenProduct.getId(), status, mRemark, mDescription, mLat, mLng);
 
         db.collection("item")
                 .add(newItem)
@@ -313,6 +353,10 @@ public class EditItemActivity extends BaseActivity implements RecyclerViewAdapte
                     isNewItem.set(false);
                     isDisplayingInfo.set(true);
                     isEditing.set(false);
+
+                    /** Set newly added item to mItem */
+                    newItem.setId(newItemId);
+                    mItem = newItem;
                 })
                 .addOnFailureListener(e -> Log.w(TAG, "Error adding document", e));
 
@@ -343,27 +387,17 @@ public class EditItemActivity extends BaseActivity implements RecyclerViewAdapte
                         "RL" + mBinding.racklevel.getText().toString() + "-" +
                         "RC" + mBinding.rackcolumn.getText().toString();
             }
+            String mDescription = mBinding.description.getText().toString();
 
             DocumentReference docRef = db.collection("item").document(mItemId);
 
-// Set the "isCapital" field of the city 'DC'
             docRef
                     .update(
                             "status", status,
-                            "remark", mRemark
+                            "remark", mRemark, "description", mDescription
                     )
-                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-                            Log.d(TAG, "DocumentSnapshot successfully updated!");
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Log.w(TAG, "Error updating document", e);
-                        }
-                    });
+                    .addOnSuccessListener(aVoid -> Log.d(TAG, "DocumentSnapshot successfully updated!"))
+                    .addOnFailureListener(e -> Log.w(TAG, "Error updating document", e));
 
 
             String currentUserId = SharedPreferenceManager.getInstance(this).getCurrentUserId();
@@ -386,6 +420,29 @@ public class EditItemActivity extends BaseActivity implements RecyclerViewAdapte
     private boolean okayToSave() {
         if (mItem == null) {
             return false;
+        }
+
+        String status = mBinding.status.getText().toString();
+
+        if(status == null || status.isEmpty()){
+            return false;
+        }
+
+        if(mItem.status!=null){
+            if(mItem.status.equalsIgnoreCase(status)){
+
+                String mRemark = "";
+                if (status.equalsIgnoreCase(ItemStatusManager.IN_WAREHOUSE)) {
+                    mRemark = "FL" + mBinding.floorlevel.getText().toString() + "-" +
+                            "RN" + mBinding.racknumber.getText().toString() + "-" +
+                            "RL" + mBinding.racklevel.getText().toString() + "-" +
+                            "RC" + mBinding.rackcolumn.getText().toString();
+                }
+
+                if(mItem.remark.equalsIgnoreCase(mRemark)){
+                    return false;
+                }
+            }
         }
         return true;
     }

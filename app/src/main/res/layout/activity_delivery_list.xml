@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <import type="android.view.View" />
+        <variable name="view" type="com.example.mon.qrcodetrackingsystem.modules.dashboard.view.activity.DeliveryListActivity"/>
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/pale_white"
+        android:orientation="vertical">
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/ActionBarMenu">
+
+        <!-- toolbar -->
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?android:attr/actionBarSize"
+            android:animateLayoutChanges="true"
+            android:background="@color/pure_white"
+            android:theme="@style/ActionBarMenu"
+            app:contentInsetEnd="0dp"
+            app:contentInsetStart="0dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <View
+                    android:layout_width="44dp"
+                    android:layout_height="wrap_content" />
+
+                <!-- Header Text layout -->
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center">
+
+                    <!-- Header Text -->
+                    <TextView
+                        android:id="@+id/headerName"
+                        style="@style/TextAppearance.Header"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginEnd="?attr/actionBarSize"
+                        android:ellipsize="end"
+                        android:gravity="center"
+                        android:maxLines="1"
+                        android:text="Delivery List" />
+
+                </RelativeLayout>
+
+                <ImageView
+                    android:id="@+id/add"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginRight="10dp"
+                    android:src="@drawable/baseline_add_white_48"/>
+
+            </LinearLayout>
+
+        </android.support.v7.widget.Toolbar>
+
+    </android.support.design.widget.AppBarLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        </android.support.v7.widget.RecyclerView>
+
+        <Button
+            android:id="@+id/confirm"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Confirm Out For Delivery"
+            android:layout_alignParentBottom="true"
+            style="@style/ButtonAppearance"
+            android:background="@drawable/shape_rectangle_solid_primary"/>
+
+        <include
+            android:visibility="gone"
+            android:id="@+id/loading"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            layout="@layout/loading"/>
+
+    </RelativeLayout>
+
+    </LinearLayout>
+
+</layout>

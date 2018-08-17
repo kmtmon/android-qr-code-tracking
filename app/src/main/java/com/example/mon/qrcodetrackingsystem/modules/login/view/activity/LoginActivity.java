@@ -2,10 +2,11 @@ package com.example.mon.qrcodetrackingsystem.modules.login.view.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import com.example.mon.qrcodetrackingsystem.R;
@@ -15,17 +16,8 @@ import com.example.mon.qrcodetrackingsystem.modules.dashboard.view.activity.Dash
 import com.example.mon.qrcodetrackingsystem.modules.login.objectmodel.User;
 import com.example.mon.qrcodetrackingsystem.utils.RxUtils;
 import com.example.mon.qrcodetrackingsystem.utils.SharedPreferenceManager;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 public class LoginActivity extends BaseActivity {
 
@@ -50,6 +42,14 @@ public class LoginActivity extends BaseActivity {
                     loginAction();
                 });
         //endregion
+
+        try {
+            PackageInfo pInfo = this.getPackageManager().getPackageInfo(getPackageName(), 0);
+            String version = pInfo.versionName;
+            mBinding.version.setText("Version: "+version);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     private void loginAction() {
@@ -66,6 +66,7 @@ public class LoginActivity extends BaseActivity {
             return;
         }
 
+        mBinding.loading.setVisibility(View.VISIBLE);
         //region Firebase login integration
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -73,6 +74,8 @@ public class LoginActivity extends BaseActivity {
         Query docRef = db.collection("user").whereEqualTo("email",email);
 
         docRef.get().addOnCompleteListener(task -> {
+
+            mBinding.loading.setVisibility(View.GONE);
             if (task.isSuccessful()) {
 
                 if(!task.getResult().isEmpty()){

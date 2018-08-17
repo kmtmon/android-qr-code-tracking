@@ -9,13 +9,11 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+import android.view.View;
 
-import com.example.mon.qrcodetrackingsystem.Manifest;
 import com.example.mon.qrcodetrackingsystem.R;
 import com.example.mon.qrcodetrackingsystem.base.BaseActivity;
 import com.example.mon.qrcodetrackingsystem.databinding.ActivityDashboardBinding;
-import com.example.mon.qrcodetrackingsystem.manager.ItemLogManager;
 import com.example.mon.qrcodetrackingsystem.manager.ProductManager;
 import com.example.mon.qrcodetrackingsystem.modules.dashboard.objectmodel.Product;
 import com.example.mon.qrcodetrackingsystem.modules.dashboard.view.adapter.DashboardProductAdapter;
@@ -24,11 +22,14 @@ import com.example.mon.qrcodetrackingsystem.modules.scanner.SimpleScannerActivit
 import com.example.mon.qrcodetrackingsystem.utils.RxUtils;
 import com.example.mon.qrcodetrackingsystem.utils.SharedPreferenceManager;
 import com.crashlytics.android.Crashlytics;
+import com.yarolegovich.lovelydialog.LovelyStandardDialog;
 
 import static android.Manifest.permission.CAMERA;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import io.fabric.sdk.android.Fabric;
 
 public class DashboardActivity extends BaseActivity {
 
@@ -53,10 +54,9 @@ public class DashboardActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
 
         mBinding = DataBindingUtil.setContentView(DashboardActivity.this, R.layout.activity_dashboard);
+        mBinding.loading.setVisibility(View.VISIBLE);
 
         Crashlytics.setUserName(SharedPreferenceManager.getInstance(this).getCurrentUserId());
-
-
 
         mRecyclerView = mBinding.recyclerView;
 
@@ -65,6 +65,17 @@ public class DashboardActivity extends BaseActivity {
         //endregion
 
         //region Click
+        RxUtils.clicks(mBinding.delivery)
+                .subscribe(view -> {
+                    if(ContextCompat.checkSelfPermission(getApplicationContext(), CAMERA) == PackageManager.PERMISSION_GRANTED){
+                        SimpleScannerActivity.show(this, true, false);
+                    }else{
+                        ActivityCompat.requestPermissions(this,
+                                new String[]{CAMERA},
+                                1);
+                    }
+                });
+
         RxUtils.clicks(mBinding.add)
                 .subscribe(view -> {
                     EditItemActivity.show(this);
@@ -72,15 +83,23 @@ public class DashboardActivity extends BaseActivity {
 
         RxUtils.clicks(mBinding.logout)
                 .subscribe(view ->{
-                    SharedPreferenceManager.getInstance(this).removeCurrentUserId();
-                    LoginActivity.show(this);
-                    finish();
+                    new LovelyStandardDialog(this, LovelyStandardDialog.ButtonLayout.VERTICAL)
+                            .setButtonsColorRes(R.color.red)
+                            .setMessage("Are you sure you want to log out?")
+                            .setTopTitleColor(R.color.pure_white)
+                            .setPositiveButton("Log Out", v -> {
+                                SharedPreferenceManager.getInstance(DashboardActivity.this).removeCurrentUserId();
+                                LoginActivity.show(DashboardActivity.this);
+                                finish();
+                            })
+                            .show();
+
                 });
 
         RxUtils.clicks(mBinding.scanner)
                 .subscribe(view ->{
                     if(ContextCompat.checkSelfPermission(getApplicationContext(), CAMERA) == PackageManager.PERMISSION_GRANTED){
-                        SimpleScannerActivity.show(this);
+                        SimpleScannerActivity.show(this, false, false);
                     }else{
                         ActivityCompat.requestPermissions(this,
                                 new String[]{CAMERA},
@@ -97,6 +116,8 @@ public class DashboardActivity extends BaseActivity {
             this.mProductList.clear();
             this.mProductList.addAll(productList);
             productAdapter.notifyDataSetChanged();
+
+            mBinding.loading.setVisibility(View.GONE);
         });
         //endregion
 
