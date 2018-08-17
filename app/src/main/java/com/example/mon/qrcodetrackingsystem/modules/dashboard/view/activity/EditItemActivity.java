@@ -465,8 +465,12 @@ public class EditItemActivity extends BaseActivity implements RecyclerViewAdapte
                             "RC" + mBinding.rackcolumn.getText().toString();
                 }
 
-                if(mItem.remark.equalsIgnoreCase(mRemark)){
-                    return false;
+                if(mItem.remark!= null && mItem.remark.equalsIgnoreCase(mRemark)){
+
+                    String description = mBinding.description.getText().toString();
+                    if(mItem.description != null && mItem.description.equalsIgnoreCase(description)){
+                        return false;
+                    }
                 }
             }
         }
