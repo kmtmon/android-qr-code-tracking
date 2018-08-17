@@ -9,6 +9,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 
 import com.example.mon.qrcodetrackingsystem.R;
@@ -20,9 +21,11 @@ import com.example.mon.qrcodetrackingsystem.manager.ItemManager;
 import com.example.mon.qrcodetrackingsystem.modules.dashboard.objectmodel.Item;
 import com.example.mon.qrcodetrackingsystem.modules.dashboard.objectmodel.Product;
 import com.example.mon.qrcodetrackingsystem.modules.dashboard.view.adapter.DeliveryListAdapter;
+import com.example.mon.qrcodetrackingsystem.modules.login.view.activity.LoginActivity;
 import com.example.mon.qrcodetrackingsystem.modules.scanner.SimpleScannerActivity;
 import com.example.mon.qrcodetrackingsystem.utils.RxUtils;
 import com.example.mon.qrcodetrackingsystem.utils.SharedPreferenceManager;
+import com.yarolegovich.lovelydialog.LovelyStandardDialog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,9 +48,31 @@ public class DeliveryListActivity extends BaseActivity {
 
     private String TAG = DeliveryListActivity.class.getSimpleName();
     private RecyclerView mRecyclerView;
-    private DeliveryListAdapter productAdapter;
+    private DeliveryListAdapter mAdapter;
     private List<Item> mItemList = new ArrayList<>();
     private List<Product> mProductList = new ArrayList<>();
+
+    @Override
+    public void onBackPressed() {
+
+        new LovelyStandardDialog(this, LovelyStandardDialog.ButtonLayout.VERTICAL)
+                .setButtonsColorRes(R.color.red)
+                .setMessage("Are you sure you want to go back? Current delivery list will be cleared")
+                .setTopTitleColor(R.color.pure_white)
+                .setPositiveButton("Yes", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        SharedPreferenceManager.getInstance(DeliveryListActivity.this).removeAllDeliveryItemsAndProducts();
+                        goback();
+                    }
+                })
+                .show();
+    }
+
+    private void goback(){
+        super.onBackPressed();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +83,7 @@ public class DeliveryListActivity extends BaseActivity {
         mProductList = SharedPreferenceManager.getInstance(this).getDeliveryProduct();
         mRecyclerView = mBinding.recyclerView;
         setUpProductAdapter();
-        productAdapter.notifyDataSetChanged();
+        mAdapter.notifyDataSetChanged();
 
         //region Click
         RxUtils.clicks(mBinding.confirm)
@@ -111,8 +136,8 @@ public class DeliveryListActivity extends BaseActivity {
     private void setUpProductAdapter() {
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
-        productAdapter = new DeliveryListAdapter(mProductList);
-        mRecyclerView.setAdapter(productAdapter);
+        mAdapter = new DeliveryListAdapter(mItemList);
+        mRecyclerView.setAdapter(mAdapter);
         mBinding.loading.setVisibility(View.GONE);
     }
 }

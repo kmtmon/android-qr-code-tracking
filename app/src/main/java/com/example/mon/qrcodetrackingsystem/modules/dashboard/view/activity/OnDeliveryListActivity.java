@@ -53,7 +53,7 @@ public class OnDeliveryListActivity extends BaseActivity {
         mBinding = DataBindingUtil.setContentView(OnDeliveryListActivity.this, R.layout.activity_on_delivery_list);
         mBinding.loading.setVisibility(View.VISIBLE);
         mItemList = SharedPreferenceManager.getInstance(this).getDeliveryItem();
-        mProductList = SharedPreferenceManager.getInstance(this).getDeliveryProduct();
+//        mProductList = SharedPreferenceManager.getInstance(this).getDeliveryProduct();
 
         mRecyclerView = mBinding.recyclerView;
         setUpProductAdapter();
@@ -76,7 +76,7 @@ public class OnDeliveryListActivity extends BaseActivity {
     private void setUpProductAdapter() {
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
-        productAdapter = new DeliveryListAdapter(mProductList);
+        productAdapter = new DeliveryListAdapter(mItemList);
         mRecyclerView.setAdapter(productAdapter);
         mBinding.loading.setVisibility(View.GONE);
     }

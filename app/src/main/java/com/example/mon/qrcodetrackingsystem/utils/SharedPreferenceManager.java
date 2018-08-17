@@ -98,6 +98,12 @@ public class SharedPreferenceManager {
         storeArrayInSharedPreferences(GeneralManager.DELIVERY_ITEM_LIST_KEY, deliveryItemList);
     }
 
+    public void removeAllDeliveryItemsAndProducts() {
+
+        removeKeyFromSharedPreferences(GeneralManager.DELIVERY_ITEM_LIST_KEY);
+        removeKeyFromSharedPreferences(GeneralManager.DELIVERY_PRODUCT_LIST_KEY);
+    }
+
     public void removeDeliveryProduct(String productId) {
         List<Item> deliveryProductList = new ArrayList<>();
         if (getDeliveryItem() != null) {

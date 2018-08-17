@@ -69,16 +69,17 @@ public class SimpleScannerActivity extends Activity implements ZXingScannerView.
             map = (Map<String, Object>) gson.fromJson(rawResult.getText(), map.getClass());
 
             if (map.get("id") != null && !map.get("id").toString().isEmpty()) {
-
+                mScannerView.stopCamera();
                 ItemManager.getInstance().retrieveItem(map.get("id").toString(), item -> {
                     if (item.getId() != null) {
                         if (getIntent().getBooleanExtra(IS_DELIVERY_OPTION, false)) {
                             finish();
                             SharedPreferenceManager.getInstance(this).storeDeliveryItem(item);
-                            ProductManager.getInstance().retrieveProduct(item.getProductID(), product -> {
-                                SharedPreferenceManager.getInstance(this).storeDeliveryProduct(product);
-                                DeliveryListActivity.show(this);
-                            });
+                            DeliveryListActivity.show(this);
+//                            ProductManager.getInstance().retrieveProduct(item.getProductID(), product -> {
+//                                SharedPreferenceManager.getInstance(this).storeDeliveryProduct(product);
+//                                DeliveryListActivity.show(this);
+//                            });
                         } else if (getIntent().getBooleanExtra(IS_ON_DELIVERY_OPTION, false)) {
                             finish();
                             ConfirmDeliveryActivity.show(this, item.getId());

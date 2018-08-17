@@ -5,6 +5,8 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import com.example.mon.qrcodetrackingsystem.databinding.ItemDeliveryListBinding;
+import com.example.mon.qrcodetrackingsystem.manager.ProductManager;
+import com.example.mon.qrcodetrackingsystem.modules.dashboard.objectmodel.Item;
 import com.example.mon.qrcodetrackingsystem.modules.dashboard.objectmodel.Product;
 import com.squareup.picasso.Picasso;
 
@@ -18,10 +20,10 @@ public class DeliveryListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     private String TAG = DeliveryListAdapter.class.getSimpleName();
 
-    private List<Product> mProductList;
+    private List<Item> mItemList;
 
-    public DeliveryListAdapter(List<Product> mProductList) {
-        this.mProductList = mProductList;
+    public DeliveryListAdapter(List<Item> mProductList) {
+        this.mItemList = mProductList;
     }
 
     @Override
@@ -36,24 +38,29 @@ public class DeliveryListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        Product product = mProductList.get(position);
+        Item item = mItemList.get(position);
         DeliveryListViewHolder productViewHolder = (DeliveryListViewHolder)holder;
-        productViewHolder.mBinding.title.setText(product.getName());
+        ProductManager.getInstance().retrieveProduct(item.getProductID(), product -> {
+            productViewHolder.mBinding.title.setText(product.getName());
 
-        if(product.getImagePath() != null && !product.getImagePath().isEmpty()){
+            if(product.getImagePath() != null && !product.getImagePath().isEmpty()){
 
-            Picasso.get()
-                    .load(product.imagePath)
-                    .into(productViewHolder.mBinding.imageView);
-        }else{
+                Picasso.get()
+                        .load(product.imagePath)
+                        .into(productViewHolder.mBinding.imageView);
+            }
 
-        }
+            if(item.remark != null && !item.remark.isEmpty()){
+                productViewHolder.mBinding.subTitle.setText(item.remark);
+            }
+        });
+
 
     }
 
     @Override
     public int getItemCount() {
-        return mProductList.size();
+        return mItemList.size();
     }
 
     static class DeliveryListViewHolder extends RecyclerView.ViewHolder {
