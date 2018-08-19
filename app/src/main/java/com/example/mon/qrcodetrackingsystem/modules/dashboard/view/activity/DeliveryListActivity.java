@@ -18,13 +18,17 @@ import com.example.mon.qrcodetrackingsystem.databinding.ActivityDeliveryListBind
 import com.example.mon.qrcodetrackingsystem.manager.DeliveryManager;
 import com.example.mon.qrcodetrackingsystem.manager.ItemLogManager;
 import com.example.mon.qrcodetrackingsystem.manager.ItemManager;
+import com.example.mon.qrcodetrackingsystem.manager.ItemStatusManager;
+import com.example.mon.qrcodetrackingsystem.modules.dashboard.objectmodel.Delivery;
 import com.example.mon.qrcodetrackingsystem.modules.dashboard.objectmodel.Item;
+import com.example.mon.qrcodetrackingsystem.modules.dashboard.objectmodel.ItemLog;
 import com.example.mon.qrcodetrackingsystem.modules.dashboard.objectmodel.Product;
 import com.example.mon.qrcodetrackingsystem.modules.dashboard.view.adapter.DeliveryListAdapter;
 import com.example.mon.qrcodetrackingsystem.modules.login.view.activity.LoginActivity;
 import com.example.mon.qrcodetrackingsystem.modules.scanner.SimpleScannerActivity;
 import com.example.mon.qrcodetrackingsystem.utils.RxUtils;
 import com.example.mon.qrcodetrackingsystem.utils.SharedPreferenceManager;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.yarolegovich.lovelydialog.LovelyStandardDialog;
 
 import java.util.ArrayList;
@@ -50,7 +54,6 @@ public class DeliveryListActivity extends BaseActivity {
     private RecyclerView mRecyclerView;
     private DeliveryListAdapter mAdapter;
     private List<Item> mItemList = new ArrayList<>();
-    private List<Product> mProductList = new ArrayList<>();
 
     @Override
     public void onBackPressed() {
@@ -75,12 +78,26 @@ public class DeliveryListActivity extends BaseActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+
+        mItemList.clear();
+        List<Item> newArray = SharedPreferenceManager.getInstance(this).getDeliveryItem();
+        mItemList.addAll(newArray);
+        mItemList = SharedPreferenceManager.getInstance(this).getDeliveryItem();
+        mAdapter.notifyDataSetChanged();
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mBinding = DataBindingUtil.setContentView(DeliveryListActivity.this, R.layout.activity_delivery_list);
         mBinding.loading.setVisibility(View.VISIBLE);
-        mItemList = SharedPreferenceManager.getInstance(this).getDeliveryItem();
-        mProductList = SharedPreferenceManager.getInstance(this).getDeliveryProduct();
+
+        mItemList.clear();
+        List<Item> newArray = SharedPreferenceManager.getInstance(this).getDeliveryItem();
+        mItemList.addAll(newArray);
+
         mRecyclerView = mBinding.recyclerView;
         setUpProductAdapter();
         mAdapter.notifyDataSetChanged();
@@ -90,7 +107,6 @@ public class DeliveryListActivity extends BaseActivity {
             .subscribe(view -> {
                 createDeliveryLog();
                 updateItemOutForDelivery();
-                createItemLog();
                 MapActivity.show(this);
 
             });
@@ -112,31 +128,48 @@ public class DeliveryListActivity extends BaseActivity {
 
     private void updateItemOutForDelivery() {
         for (int i = 0; i < mItemList.size(); i++) {
-            ItemManager.getInstance().updateItemDeliveryStatus(mItemList.get(i).getId(), "Out For Delivery");
+            ItemManager.getInstance().updateItemDeliveryStatus(mItemList.get(i).getId(), ItemStatusManager.OUT_FOR_DELIVERY);
         }
     }
 
-    private void createItemLog() {
+    private void createItemLog(String deliveryLogId) {
         String currentUserId = SharedPreferenceManager.getInstance(this).getCurrentUserId();
 
         for (int i = 0; i < mItemList.size(); i++) {
             long unixTime = System.currentTimeMillis() / 1000L;
-            ItemLogManager.getInstance().createNewItemLog(mItemList.get(i).getId(), currentUserId, unixTime, "Out For Delivery", "");
+            ItemLog log = ItemLogManager.getInstance().createNewItemLog(mItemList.get(i).getId(), currentUserId, unixTime, ItemStatusManager.OUT_FOR_DELIVERY, deliveryLogId);
+            ItemLogManager.getInstance().saveItemLog(log);
         }
     }
 
     private void createDeliveryLog() {
         String currentUserId = SharedPreferenceManager.getInstance(this).getCurrentUserId();
-        for (int i = 0; i < mItemList.size(); i++) {
-            long unixTime = System.currentTimeMillis() / 1000L;
-            DeliveryManager.getInstance().createNewDelivery(currentUserId, unixTime);
-        }
+        long unixTime = System.currentTimeMillis() / 1000L;
+
+        Delivery newDelivery = new Delivery();
+        newDelivery.setUserId(currentUserId);
+        newDelivery.setLat(0);
+        newDelivery.setLng(0);
+        newDelivery.setTimestamp(unixTime);
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        db.collection("delivery")
+                .add(newDelivery)
+                .addOnSuccessListener(documentReference ->
+                        createItemLog(documentReference.getId()))
+                .addOnFailureListener(e -> Log.w("", "Error adding document", e));
     }
 
     private void setUpProductAdapter() {
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
-        mAdapter = new DeliveryListAdapter(mItemList);
+        mAdapter = new DeliveryListAdapter(mItemList, new DeliveryListAdapter.DeliveryListListener() {
+            @Override
+            public void clickOnItem(String itemId) {
+                /** NOT USING*/
+            }
+        });
         mRecyclerView.setAdapter(mAdapter);
         mBinding.loading.setVisibility(View.GONE);
     }

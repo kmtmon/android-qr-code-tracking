@@ -14,8 +14,8 @@ public class ItemStatusManager {
         ArrayList<String> list = new ArrayList<String>();
         list.add(ORDERED_FROM_SUPPLIER);
         list.add(IN_WAREHOUSE);
-        list.add(OUT_FOR_DELIVERY);
-        list.add(DELIVERED);
+//        list.add(OUT_FOR_DELIVERY);
+//        list.add(DELIVERED);
         return list;
     }
 }

@@ -11,6 +11,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -33,6 +35,7 @@ import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.yarolegovich.lovelydialog.LovelyStandardDialog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,6 +62,26 @@ public class MapActivity extends BaseActivity implements OnMapReadyCallback, Goo
     private List<Product> mProductList = new ArrayList<>();
 
 
+    @Override
+    public void onBackPressed() {
+
+        new LovelyStandardDialog(this, LovelyStandardDialog.ButtonLayout.VERTICAL)
+                .setButtonsColorRes(R.color.red)
+                .setMessage("Are you sure you want to go back? Current delivery list will be cleared")
+                .setTopTitleColor(R.color.pure_white)
+                .setPositiveButton("Yes", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        SharedPreferenceManager.getInstance(MapActivity.this).removeAllDeliveryItemsAndProducts();
+                        Intent intent = new Intent(MapActivity.this, DashboardActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        MapActivity.this.startActivity(intent);
+                        finish();
+                    }
+                })
+                .show();
+    }
 
     //region Override
     @Override
@@ -70,7 +93,7 @@ public class MapActivity extends BaseActivity implements OnMapReadyCallback, Goo
         list.setOnClickListener(view -> OnDeliveryListActivity.show(this));
 
         mItemList = SharedPreferenceManager.getInstance(this).getDeliveryItem();
-        mProductList = SharedPreferenceManager.getInstance(this).getDeliveryProduct();
+//        mProductList = SharedPreferenceManager.getInstance(this).getDeliveryProduct();
 
         // Obtain the MapFragment and get notified when the map is ready to be used.
         MapFragment mapFragment = (MapFragment) getFragmentManager()
@@ -90,7 +113,6 @@ public class MapActivity extends BaseActivity implements OnMapReadyCallback, Goo
     }
 
 
-
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
@@ -102,7 +124,7 @@ public class MapActivity extends BaseActivity implements OnMapReadyCallback, Goo
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        mGoogleMap=googleMap;
+        mGoogleMap = googleMap;
 
         //Initialize Google Play Services
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -116,16 +138,15 @@ public class MapActivity extends BaseActivity implements OnMapReadyCallback, Goo
                 //Request Location Permission
                 checkLocationPermission();
             }
-        }
-        else {
+        } else {
             buildGoogleApiClient();
             mGoogleMap.setMyLocationEnabled(true);
         }
 
-        for (int i = 0; i < mItemList.size(); i++) {
-            LatLng latLng = new LatLng(mItemList.get(i).getLat(), mItemList.get(i).getLng());
-            mGoogleMap.addMarker(new MarkerOptions().position(latLng).title(mItemList.get(i).getId()));
-        }
+//        for (int i = 0; i < mItemList.size(); i++) {
+//            LatLng latLng = new LatLng(mItemList.get(i).getLat(), mItemList.get(i).getLng());
+//            mGoogleMap.addMarker(new MarkerOptions().position(latLng).title(mItemList.get(i).getId()));
+//        }
 
     }
 
@@ -147,7 +168,7 @@ public class MapActivity extends BaseActivity implements OnMapReadyCallback, Goo
         LocationRequest mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(1000);
         mLocationRequest.setFastestInterval(1000);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
@@ -156,20 +177,27 @@ public class MapActivity extends BaseActivity implements OnMapReadyCallback, Goo
     }
 
     @Override
-    public void onConnectionSuspended(int i) {}
+    public void onConnectionSuspended(int i) {
+    }
+
+    private String TAG = MapActivity.class.getSimpleName();
 
     @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {}
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        Log.e(TAG, "onConnectionFailed");
+    }
 
     @Override
-    public void onLocationChanged(Location location)
-    {
+    public void onLocationChanged(Location location) {
+
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+        Log.e(TAG, "onLocationChanged " + latLng.latitude + " " + latLng.longitude);
         updateCurrentLocation(latLng.latitude, latLng.longitude);
-        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,12));
+        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 12));
     }
 
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
+
     private void checkLocationPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -188,7 +216,7 @@ public class MapActivity extends BaseActivity implements OnMapReadyCallback, Goo
                             //Prompt the user once explanation has been shown
                             ActivityCompat.requestPermissions(MapActivity.this,
                                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                                    MY_PERMISSIONS_REQUEST_LOCATION );
+                                    MY_PERMISSIONS_REQUEST_LOCATION);
                         })
                         .create()
                         .show();
@@ -198,7 +226,7 @@ public class MapActivity extends BaseActivity implements OnMapReadyCallback, Goo
                 // No explanation needed, we can request the permission.
                 ActivityCompat.requestPermissions(this,
                         new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                        MY_PERMISSIONS_REQUEST_LOCATION );
+                        MY_PERMISSIONS_REQUEST_LOCATION);
             }
         }
     }
@@ -225,6 +253,7 @@ public class MapActivity extends BaseActivity implements OnMapReadyCallback, Goo
             }
         }
     }
+
     private void updateCurrentLocation(double lat, double lng) {
         String currentUserId = SharedPreferenceManager.getInstance(this).getCurrentUserId();
         long unixTime = System.currentTimeMillis() / 1000L;

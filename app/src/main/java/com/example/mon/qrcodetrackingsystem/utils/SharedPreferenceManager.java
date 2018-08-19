@@ -101,20 +101,6 @@ public class SharedPreferenceManager {
     public void removeAllDeliveryItemsAndProducts() {
 
         removeKeyFromSharedPreferences(GeneralManager.DELIVERY_ITEM_LIST_KEY);
-        removeKeyFromSharedPreferences(GeneralManager.DELIVERY_PRODUCT_LIST_KEY);
-    }
-
-    public void removeDeliveryProduct(String productId) {
-        List<Item> deliveryProductList = new ArrayList<>();
-        if (getDeliveryItem() != null) {
-            deliveryProductList = getDeliveryItem();
-            for (int i = 0; i < deliveryProductList.size(); i++) {
-                if (deliveryProductList.get(i).getId().equals(productId)) {
-                    deliveryProductList.remove(i);
-                }
-            }
-        }
-        storeArrayInSharedPreferences(GeneralManager.DELIVERY_PRODUCT_LIST_KEY, deliveryProductList);
     }
 
     public void storeDeliveryItem(Item item) {
@@ -126,20 +112,37 @@ public class SharedPreferenceManager {
         storeArrayInSharedPreferences(GeneralManager.DELIVERY_ITEM_LIST_KEY, deliveryItemList);
     }
 
-    public void storeDeliveryProduct(Product product) {
-        List<Product> deliveryItemProductList = new ArrayList<>();
-        if (getDeliveryProduct() != null) {
-            deliveryItemProductList = getDeliveryProduct();
-        }
-        deliveryItemProductList.add(product);
-        storeArrayInSharedPreferences(GeneralManager.DELIVERY_PRODUCT_LIST_KEY, deliveryItemProductList);
-    }
-
     public List<Item> getDeliveryItem() {
         return getItemArrayFromSharedPreferences(GeneralManager.DELIVERY_ITEM_LIST_KEY);
     }
 
-    public List<Product> getDeliveryProduct() {
-        return getProductArrayFromSharedPreferences(GeneralManager.DELIVERY_PRODUCT_LIST_KEY);
-    }
+//    public void removeDeliveryProduct(String productId) {
+//        List<Item> deliveryProductList = new ArrayList<>();
+//        if (getDeliveryItem() != null) {
+//            deliveryProductList = getDeliveryItem();
+//            for (int i = 0; i < deliveryProductList.size(); i++) {
+//                if (deliveryProductList.get(i).getId().equals(productId)) {
+//                    deliveryProductList.remove(i);
+//                }
+//            }
+//        }
+//        storeArrayInSharedPreferences(GeneralManager.DELIVERY_PRODUCT_LIST_KEY, deliveryProductList);
+//    }
+
+
+
+//    public void storeDeliveryProduct(Product product) {
+//        List<Product> deliveryItemProductList = new ArrayList<>();
+//        if (getDeliveryProduct() != null) {
+//            deliveryItemProductList = getDeliveryProduct();
+//        }
+//        deliveryItemProductList.add(product);
+//        storeArrayInSharedPreferences(GeneralManager.DELIVERY_PRODUCT_LIST_KEY, deliveryItemProductList);
+//    }
+
+
+
+//    public List<Product> getDeliveryProduct() {
+//        return getProductArrayFromSharedPreferences(GeneralManager.DELIVERY_PRODUCT_LIST_KEY);
+//    }
 }

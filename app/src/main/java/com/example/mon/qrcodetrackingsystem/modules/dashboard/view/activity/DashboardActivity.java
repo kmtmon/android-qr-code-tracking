@@ -16,7 +16,9 @@ import android.widget.Toast;
 import com.example.mon.qrcodetrackingsystem.R;
 import com.example.mon.qrcodetrackingsystem.base.BaseActivity;
 import com.example.mon.qrcodetrackingsystem.databinding.ActivityDashboardBinding;
+import com.example.mon.qrcodetrackingsystem.manager.ItemManager;
 import com.example.mon.qrcodetrackingsystem.manager.ProductManager;
+import com.example.mon.qrcodetrackingsystem.modules.dashboard.objectmodel.Item;
 import com.example.mon.qrcodetrackingsystem.modules.dashboard.objectmodel.Product;
 import com.example.mon.qrcodetrackingsystem.modules.dashboard.view.adapter.DashboardProductAdapter;
 import com.example.mon.qrcodetrackingsystem.modules.login.view.activity.LoginActivity;
@@ -57,7 +59,7 @@ public class DashboardActivity extends BaseActivity {
 
         mBinding = DataBindingUtil.setContentView(DashboardActivity.this, R.layout.activity_dashboard);
         mBinding.loading.setVisibility(View.VISIBLE);
-
+        Fabric.with(this, new Crashlytics());
         Crashlytics.setUserName(SharedPreferenceManager.getInstance(this).getCurrentUserId());
 
         mRecyclerView = mBinding.recyclerView;
@@ -111,8 +113,6 @@ public class DashboardActivity extends BaseActivity {
                     }
 
                 });
-
-
         //endregion
 
         //region Retrieve Data

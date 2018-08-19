@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -12,11 +13,16 @@ import com.example.mon.qrcodetrackingsystem.base.BaseActivity;
 import com.example.mon.qrcodetrackingsystem.databinding.ActivityConfirmDeliveryBinding;
 import com.example.mon.qrcodetrackingsystem.manager.ItemLogManager;
 import com.example.mon.qrcodetrackingsystem.manager.ItemManager;
+import com.example.mon.qrcodetrackingsystem.manager.ItemStatusManager;
+import com.example.mon.qrcodetrackingsystem.manager.ProductManager;
 import com.example.mon.qrcodetrackingsystem.modules.dashboard.objectmodel.Item;
+import com.example.mon.qrcodetrackingsystem.modules.dashboard.objectmodel.ItemLog;
 import com.example.mon.qrcodetrackingsystem.modules.dashboard.objectmodel.Product;
 import com.example.mon.qrcodetrackingsystem.utils.RxUtils;
 import com.example.mon.qrcodetrackingsystem.utils.SharedPreferenceManager;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.squareup.picasso.Picasso;
+import com.yarolegovich.lovelydialog.LovelyStandardDialog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +32,7 @@ public class ConfirmDeliveryActivity extends BaseActivity {
     private final static String ITEM_ID = "ITEM_ID";
 
     //region Entry
+
     /**
      * Entry
      */
@@ -53,31 +60,39 @@ public class ConfirmDeliveryActivity extends BaseActivity {
 
         mItemId = getIntent().getStringExtra(ITEM_ID);
         getItem();
-        getProduct();
-        setupInfo();
 
 
         RxUtils.clicks(mBinding.confirm)
-            .subscribe(view -> {
-                updateItemOutForDelivery();
-                createItemLog();
-                SharedPreferenceManager.getInstance(this).removeDeliveryItem(mItem.getId());
-                SharedPreferenceManager.getInstance(this).removeDeliveryProduct(mItem.getProductID());
-                Toast.makeText(getBaseContext(), "Successfully confirmed delivery!", Toast.LENGTH_SHORT);
-                finish();
-            });
+                .subscribe(view -> {
+                    updateItemOutForDelivery();
+                    createItemLog();
+                    SharedPreferenceManager.getInstance(this).removeDeliveryItem(mItem.getId());
+
+                    if(SharedPreferenceManager.getInstance(this).getDeliveryItem().size() == 0){
+                        /** Go to dashboard*/
+                        Intent intent = new Intent(ConfirmDeliveryActivity.this, DashboardActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        ConfirmDeliveryActivity.this.startActivity(intent);
+                        finish();
+                    }else{
+                        /** Go back to delivery list*/
+                        finish();
+                    }
+                    Toast.makeText(getBaseContext(), "Successfully confirmed delivery!", Toast.LENGTH_SHORT);
+                });
 
         mBinding.loading.setVisibility(View.GONE);
     }
 
     private void updateItemOutForDelivery() {
-        ItemManager.getInstance().updateItemDeliveryStatus(mItemId, "Delivered");
+        ItemManager.getInstance().updateItemDeliveryStatus(mItemId, ItemStatusManager.DELIVERED);
     }
 
     private void createItemLog() {
         String currentUserId = SharedPreferenceManager.getInstance(this).getCurrentUserId();
         long unixTime = System.currentTimeMillis() / 1000L;
-        ItemLogManager.getInstance().createNewItemLog(mItemId, currentUserId, unixTime, "Delivered", "");
+        ItemLog log = ItemLogManager.getInstance().createNewItemLog(mItemId, currentUserId, unixTime, ItemStatusManager.DELIVERED, "");
+        ItemLogManager.getInstance().saveItemLog(log);
     }
 
     private void getItem() {
@@ -85,15 +100,28 @@ public class ConfirmDeliveryActivity extends BaseActivity {
         for (int i = 0; i < mItemList.size(); i++) {
             if (mItemList.get(i).getId().equals(mItemId)) {
                 mItem = mItemList.get(i);
-            }
-        }
-    }
 
-    private void getProduct() {
-        mProductList = SharedPreferenceManager.getInstance(this).getDeliveryProduct();
-        for(int i = 0; i < mProductList.size(); i++) {
-            if (mProductList.get(i).getId().equals(mItem.getProductID())) {
-                mProduct = mProductList.get(i);
+                ProductManager.getInstance().retrieveProduct(mItem.getProductID(), product -> {
+                    mProduct = product;
+
+                    setupInfo();
+                });
+            }else{
+                if (i == mItemList.size() - 1) {
+                    new LovelyStandardDialog(this, LovelyStandardDialog.ButtonLayout.VERTICAL)
+                            .setButtonsColorRes(R.color.colorPrimary)
+                            .setMessage("Invalid Item")
+                            .setTopTitleColor(R.color.pure_white)
+                            .setPositiveButton("Ok", new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+
+                                    finish();
+
+                                }
+                            })
+                            .show();
+                }
             }
         }
     }
@@ -103,7 +131,7 @@ public class ConfirmDeliveryActivity extends BaseActivity {
                 .load(mProduct.imagePath)
                 .into(mBinding.imageView);
         mBinding.title.setText(mProduct.getName());
-        mBinding.itemId.setText(mItem.getId());
-        mBinding.productId.setText(mProduct.getId());
+        mBinding.itemId.setText("Item ID: "+mItem.getId());
+//        mBinding.productId.setText(mProduct.getId());
     }
 }

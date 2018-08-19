@@ -9,6 +9,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 
 import com.example.mon.qrcodetrackingsystem.R;
@@ -45,15 +46,26 @@ public class OnDeliveryListActivity extends BaseActivity {
     private RecyclerView mRecyclerView;
     private DeliveryListAdapter productAdapter;
     private List<Item> mItemList = new ArrayList<>();
-    private List<Product> mProductList = new ArrayList<>();
+//    private List<Product> mProductList = new ArrayList<>();
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mItemList.clear();
+        List<Item> newArray = SharedPreferenceManager.getInstance(this).getDeliveryItem();
+        mItemList.addAll(newArray);
+        productAdapter.notifyDataSetChanged();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mBinding = DataBindingUtil.setContentView(OnDeliveryListActivity.this, R.layout.activity_on_delivery_list);
         mBinding.loading.setVisibility(View.VISIBLE);
-        mItemList = SharedPreferenceManager.getInstance(this).getDeliveryItem();
-//        mProductList = SharedPreferenceManager.getInstance(this).getDeliveryProduct();
+
+        mItemList.clear();
+        List<Item> newArray = SharedPreferenceManager.getInstance(this).getDeliveryItem();
+        mItemList.addAll(newArray);
 
         mRecyclerView = mBinding.recyclerView;
         setUpProductAdapter();
@@ -76,9 +88,14 @@ public class OnDeliveryListActivity extends BaseActivity {
     private void setUpProductAdapter() {
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
-        productAdapter = new DeliveryListAdapter(mItemList);
+        productAdapter = new DeliveryListAdapter(mItemList, new DeliveryListAdapter.DeliveryListListener() {
+            @Override
+            public void clickOnItem(String itemId) {
+                ConfirmDeliveryActivity.show(OnDeliveryListActivity.this, itemId);
+            }
+        });
         mRecyclerView.setAdapter(productAdapter);
         mBinding.loading.setVisibility(View.GONE);
-    }
 
+    }
 }

@@ -8,6 +8,7 @@ import com.example.mon.qrcodetrackingsystem.databinding.ItemDeliveryListBinding;
 import com.example.mon.qrcodetrackingsystem.manager.ProductManager;
 import com.example.mon.qrcodetrackingsystem.modules.dashboard.objectmodel.Item;
 import com.example.mon.qrcodetrackingsystem.modules.dashboard.objectmodel.Product;
+import com.example.mon.qrcodetrackingsystem.utils.RxUtils;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -21,9 +22,11 @@ public class DeliveryListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private String TAG = DeliveryListAdapter.class.getSimpleName();
 
     private List<Item> mItemList;
+    private DeliveryListListener mListner;
 
-    public DeliveryListAdapter(List<Item> mProductList) {
+    public DeliveryListAdapter(List<Item> mProductList, DeliveryListListener listner) {
         this.mItemList = mProductList;
+        this.mListner=listner;
     }
 
     @Override
@@ -55,7 +58,12 @@ public class DeliveryListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             }
         });
 
-
+        RxUtils.clicks(productViewHolder.mBinding.getRoot())
+                .subscribe(view -> {
+                    if(mListner != null){
+                        mListner.clickOnItem(item.getId());
+                    }
+                });
     }
 
     @Override
@@ -73,7 +81,7 @@ public class DeliveryListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     public interface DeliveryListListener {
-        void launchProductInfo(String productId);
+        void clickOnItem(String itemId);
 
     }
 }

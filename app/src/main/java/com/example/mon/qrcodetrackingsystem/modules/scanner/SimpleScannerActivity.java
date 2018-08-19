@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.example.mon.qrcodetrackingsystem.manager.ItemManager;
+import com.example.mon.qrcodetrackingsystem.manager.ItemStatusManager;
 import com.example.mon.qrcodetrackingsystem.manager.ProductManager;
 import com.example.mon.qrcodetrackingsystem.modules.dashboard.objectmodel.Item;
 import com.example.mon.qrcodetrackingsystem.modules.dashboard.view.activity.ConfirmDeliveryActivity;
@@ -73,23 +74,27 @@ public class SimpleScannerActivity extends Activity implements ZXingScannerView.
                 ItemManager.getInstance().retrieveItem(map.get("id").toString(), item -> {
                     if (item.getId() != null) {
                         if (getIntent().getBooleanExtra(IS_DELIVERY_OPTION, false)) {
-                            finish();
-                            SharedPreferenceManager.getInstance(this).storeDeliveryItem(item);
-                            DeliveryListActivity.show(this);
-//                            ProductManager.getInstance().retrieveProduct(item.getProductID(), product -> {
-//                                SharedPreferenceManager.getInstance(this).storeDeliveryProduct(product);
-//                                DeliveryListActivity.show(this);
-//                            });
+
+                            if(item.status.equalsIgnoreCase(ItemStatusManager.IN_WAREHOUSE)){
+                                finish();
+                                SharedPreferenceManager.getInstance(this).storeDeliveryItem(item);
+                                DeliveryListActivity.show(this);
+                                return;
+                            }
+
                         } else if (getIntent().getBooleanExtra(IS_ON_DELIVERY_OPTION, false)) {
-                            finish();
-                            ConfirmDeliveryActivity.show(this, item.getId());
-                        } else {
-                            finish();
-                            EditItemActivity.show(this, item.getId());
+
+                            if(item.status.equalsIgnoreCase(ItemStatusManager.OUT_FOR_DELIVERY)){
+                                finish();
+                                ConfirmDeliveryActivity.show(this, item.getId());
+                                return;
+                            }
+
                         }
+                        finish();
+                        EditItemActivity.show(this, item.getId());
                     }
                 });
-
             }
 
         } catch (Exception e) {

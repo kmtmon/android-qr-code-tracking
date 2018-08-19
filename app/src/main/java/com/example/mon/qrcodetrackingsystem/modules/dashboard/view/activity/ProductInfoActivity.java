@@ -23,6 +23,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,6 +64,7 @@ public class ProductInfoActivity extends Activity implements ItemListAdapter.Ite
         }
 
         mRecyclerView = mBinding.recyclerView;
+        mRecyclerView.setNestedScrollingEnabled(false);
 
         //region Setup
         setUpItemListAdapter();
@@ -121,6 +123,16 @@ public class ProductInfoActivity extends Activity implements ItemListAdapter.Ite
     private void setUpProductInfo(){
 
         if (mProduct != null) {
+
+            if(mProduct.getImagePath() != null && !mProduct.getImagePath().isEmpty()){
+
+                Picasso.get()
+                        .load(mProduct.imagePath)
+                        .into(mBinding.imageView);
+                mBinding.imageView.setVisibility(View.VISIBLE);
+            }else{
+                mBinding.imageView.setVisibility(View.GONE);
+            }
 
             if(mProduct.getName() == null ||
             mProduct.getName().isEmpty() ||

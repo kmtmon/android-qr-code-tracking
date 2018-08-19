@@ -112,7 +112,6 @@ public class EditItemActivity extends BaseActivity implements RecyclerViewAdapte
                             generateQR();
                         }
                     }, 200);
-
                 });
 
         RxUtils.clicks(mBinding.product)

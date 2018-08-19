@@ -31,6 +31,17 @@ public class ItemLogManager {
     }
     //endregion
 
+    //region Save
+    public void saveItemLog(ItemLog log){
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("log")
+                .add(log)
+                .addOnSuccessListener(documentReference -> {
+                })
+                .addOnFailureListener(e -> {});
+    }
+    //endregion
+
     //region Retrieve
     public void retrieveItemLogs(String itemId,ItemLogsOnCompletionListener mListener){
         List<ItemLog> list = new ArrayList<ItemLog>();
