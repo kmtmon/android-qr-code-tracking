@@ -128,7 +128,7 @@ public class DeliveryListActivity extends BaseActivity {
 
     private void updateItemOutForDelivery() {
         for (int i = 0; i < mItemList.size(); i++) {
-            ItemManager.getInstance().updateItemDeliveryStatus(mItemList.get(i).getId(), ItemStatusManager.OUT_FOR_DELIVERY);
+            ItemManager.getInstance().updateItemDeliveryStatus(mItemList.get(i).getId(), ItemStatusManager.OUT_FOR_DELIVERY, "");
         }
     }
 

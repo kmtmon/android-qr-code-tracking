@@ -115,14 +115,14 @@ public class ItemManager {
         });
     }
 
-    public void updateItemDeliveryStatus(String itemId, String status) {
+    public void updateItemDeliveryStatus(String itemId, String status, String remark) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         DocumentReference docRef = db.collection("item").document(itemId);
 
         docRef.update(
                 "status", status,
-                "remark", ""
+                "remark", remark
         ).addOnCompleteListener( task -> {
             if (!task.isSuccessful()) {
                //error

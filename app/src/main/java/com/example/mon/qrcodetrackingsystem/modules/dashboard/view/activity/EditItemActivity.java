@@ -103,6 +103,7 @@ public class EditItemActivity extends BaseActivity implements RecyclerViewAdapte
         //region Click
         RxUtils.clicks(mBinding.qr)
                 .subscribe(view -> {
+//                    ConfirmDeliveryActivity.show(this,mItemId);
                     mBinding.loading.setVisibility(View.VISIBLE);
 
                     final Handler handler = new Handler();
