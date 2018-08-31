@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">QR Code Tracking System</string>
+    <string name="app_name">QR Code Tracking</string>
 
     <!--Login-->
     <string name="login">Login</string>
